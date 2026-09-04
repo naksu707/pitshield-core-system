@@ -47,7 +47,7 @@ Frameworks, databases, and third-party integrations will be officially listed he
 
 # PitShield Core System
 
-> **A smart automotive service management platform for workshops, combining vehicle history, billing, maintenance tracking, and extended warranties or microinsurance protection.**
+> **Una plataforma inteligente de gestión de servicios automotrices para talleres, que combina historial vehicular, facturación, seguimiento de mantenimiento y protección de garantías extendidas o microseguros.**
 
 ---
 
