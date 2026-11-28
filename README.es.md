@@ -32,6 +32,7 @@
 | El cliente duda de que los repuestos facturados se instalaron o de los precios | Un **historial digital del vehículo** que no se puede alterar, con kilometraje, repuestos y evidencia en fotos o video |
 | El papel, las hojas de cálculo y los puntos de venta genéricos hacen perder dinero | **Órdenes de trabajo, inventario, facturación electrónica y pagos** en un solo lugar                        |
 | Cuando una reparación falla, el taller paga el reproceso o pierde al cliente  | **Garantías extendidas y microseguros** vendidos al momento del cobro, respaldados por una aseguradora, con reclamos digitales |
+| Los clientes llaman a preguntar lo mismo y el dueño decide por intuición      | **Chatbots con IA** que responden y agendan las 24 horas, y **estadísticas** que muestran cómo va realmente el negocio |
 
 ### Módulos
 
@@ -47,9 +48,34 @@
 | 8  | Garantías, microseguros y reclamos          | Elegibilidad, emisión, coberturas, reclamos, comisiones                                |
 | 9  | Portal del cliente                          | Vehículos, órdenes, presupuestos, facturas y coberturas desde el celular               |
 | 10 | Notificaciones automáticas                  | Eventos del servicio y recordatorios de mantenimiento por correo y WhatsApp           |
-| 11 | Reportes y analítica                        | Reportes financieros, operativos y de inventario, exportación a CSV y PDF             |
-| 12 | Agentes de IA                               | Apoyo en diagnóstico, mantenimiento, atención al cliente, inventario y reclamos        |
+| 11 | Reportes, estadísticas y analítica          | Tableros de indicadores, estadísticas de servicios y técnicos, analítica de la plataforma y de las aseguradoras, exportaciones |
+| 12 | IA y chatbots                               | Chatbot del cliente (portal y WhatsApp), asistente del personal y agentes de apoyo     |
 | 13 | Administración de la plataforma            | Alta de talleres, aseguradoras, productos de protección                                |
+
+---
+
+## 🤖 Inteligencia artificial y chatbots
+
+| Chatbot o agente              | Quién lo usa             | Qué hace                                                                                     |
+| ----------------------------- | ------------------------ | -------------------------------------------------------------------------------------------- |
+| **Chatbot del cliente**       | Clientes, en el portal y por WhatsApp | Responde sobre sus vehículos, órdenes, facturas y coberturas; agenda, reprograma y cancela citas; pasa la conversación a un asesor cuando hace falta |
+| **Asistente del personal**    | Personal del taller      | Responde preguntas como *"¿Qué vehículos están listos para entrega hoy?"*, según los permisos de cada rol |
+| **Agentes de apoyo**          | Técnicos, gerentes, auditores | Sugieren posibles diagnósticos, mantenimientos preventivos, reposición de inventario y un preanálisis de reclamos |
+
+Los chatbots responden con los datos reales del taller y con una base de conocimiento que configura cada taller (preguntas frecuentes, horarios, políticas). Nunca inventan precios ni estados, piden confirmación antes de agendar y toda decisión final (diagnóstico, pago, reclamo) la toma una persona. Los datos personales se enmascaran antes de llegar al proveedor de IA.
+
+---
+
+## 📊 Estadísticas y analítica
+
+| Tablero                    | Para                         | Indicadores principales                                                                             |
+| -------------------------- | ---------------------------- | --------------------------------------------------------------------------------------------------- |
+| **Indicadores del taller** | Dueño o gerente              | Ticket promedio, tasa de aprobación de presupuestos, clientes que regresan, tiempo promedio de atención, servicios vendidos con cobertura |
+| **Servicios y técnicos**   | Dueño o gerente              | Servicios más vendidos, productividad por técnico, tiempo real frente al estimado, demanda por día y hora |
+| **Finanzas e inventario**  | Dueño, gerente, inventario   | Ingresos, cartera pendiente, comisiones, movimientos de inventario y stock crítico                  |
+| **Chatbot**                | Administrador del Taller     | Conversaciones, temas más consultados, porcentaje resuelto sin asesor, citas agendadas, calificaciones |
+| **Plataforma**             | PitShield                    | Talleres activos, órdenes por mes, ingresos por comisiones, comparaciones anónimas entre talleres   |
+| **Aseguradora**            | Auditores de la aseguradora  | Coberturas vigentes, primas, reclamos por estado, siniestralidad, fallas más frecuentes             |
 
 ---
 
@@ -58,9 +84,9 @@
 | Documento                       | 🇪🇸 Español                                                       | 🇬🇧 English                                           |
 | ------------------------------- | ----------------------------------------------------------------- | ----------------------------------------------------- |
 | Especificación de requerimientos | [`REQUERIMIENTOS.md`](documentation/es/REQUERIMIENTOS.md)        | [`REQUIREMENTS.md`](documentation/en/REQUIREMENTS.md) |
-| Historias de usuario (65, en Gherkin) | [`HISTORIAS-USUARIO.md`](documentation/es/HISTORIAS-USUARIO.md) | [`USER-STORY.md`](documentation/en/USER-STORY.md)  |
+| Historias de usuario (75, en Gherkin) | [`HISTORIAS-USUARIO.md`](documentation/es/HISTORIAS-USUARIO.md) | [`USER-STORY.md`](documentation/en/USER-STORY.md)  |
 
-Los requerimientos incluyen 47 requerimientos funcionales, 20 reglas de negocio, 15 requerimientos no funcionales, el plan de entregas y una matriz de trazabilidad que relaciona cada requerimiento con sus historias de usuario.
+Los requerimientos incluyen 53 requerimientos funcionales, 23 reglas de negocio, 18 requerimientos no funcionales, el plan de entregas y una matriz de trazabilidad que relaciona cada requerimiento con sus historias de usuario.
 
 ---
 
@@ -77,6 +103,8 @@ Los requerimientos incluyen 47 requerimientos funcionales, 20 reglas de negocio,
 | Entorno local             | Docker Compose: base de datos, almacenamiento y bandeja de correo de pruebas                                          |
 | CI/CD                     | GitHub Actions                                                                                                         |
 | Gestión del proyecto      | GitHub Projects e Issues                                                                                               |
+| Inteligencia artificial   | Spring AI con un proveedor de modelo de lenguaje (se elige en la Entrega 3) y pgvector en PostgreSQL para buscar en la base de conocimiento del chatbot |
+| Analítica y gráficas      | Vistas de reportes en PostgreSQL y gráficas en React (Recharts)                                                       |
 | Integraciones (*sandbox*) | Pasarela de pago, proveedor de facturación electrónica, aseguradora aliada y WhatsApp, primero en sus entornos de prueba |
 
 **Entornos de base de datos**
@@ -222,7 +250,7 @@ curl -s -X POST http://localhost:8080/api/v1/vehiculos \
 - [ ] Configuración del frontend: React, TypeScript y Vite
 - [ ] **MVP:** acceso y roles, talleres, clientes y vehículos, agenda, órdenes de trabajo, inventario, facturación y pagos presenciales
 - [ ] **Entrega 2:** pagos en línea, factura electrónica, garantías y microseguros, reclamos, portal del cliente y notificaciones
-- [ ] **Entrega 3:** reportes y agentes de IA
+- [ ] **Entrega 3:** tableros de estadísticas y analítica, chatbots con IA (portal, WhatsApp y personal) y agentes de IA
 
 ---
 
