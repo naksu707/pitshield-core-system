@@ -14,7 +14,6 @@
 ![Docker](https://img.shields.io/badge/Docker-2496ED?style=flat-square&logo=docker&logoColor=white)
 ![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-2088FF?style=flat-square&logo=githubactions&logoColor=white)
 
-[![Backend](https://github.com/naksu707/pitshield-core-system/actions/workflows/backend.yml/badge.svg)](https://github.com/naksu707/pitshield-core-system/actions/workflows/backend.yml)
 
 </div>
 
