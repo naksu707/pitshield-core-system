@@ -14,10 +14,12 @@
 ![Docker](https://img.shields.io/badge/Docker-2496ED?style=flat-square&logo=docker&logoColor=white)
 ![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-2088FF?style=flat-square&logo=githubactions&logoColor=white)
 
+[![Backend](https://github.com/naksu707/pitshield-core-system/actions/workflows/backend.yml/badge.svg)](https://github.com/naksu707/pitshield-core-system/actions/workflows/backend.yml)
+
 </div>
 
 > [!NOTE]
-> **Status: design phase 🚧** · Requirements, user stories and the tech stack are defined. Architecture and database design come next, followed by the MVP.
+> **Status: in development 🚧** · Requirements, user stories and the tech stack are defined, and the backend base is ready: login with JWT and roles, workshop isolation and vehicle registration. The MVP comes next.
 
 ---
 
@@ -168,13 +170,56 @@ Development is done **in Spanish**; the documentation is published in Spanish an
 
 ---
 
+## ▶️ Run the backend
+
+**Requirements:** Java 21, Maven and Docker Desktop (running).
+
+```bash
+# 1. Start PostgreSQL
+docker compose up -d
+
+# 2. Start the API (http://localhost:8080)
+cd backend
+mvn spring-boot:run
+
+# 3. Run every test (Docker must be running: integration tests start their own PostgreSQL)
+mvn verify
+```
+
+| What                 | Where                                                                                       |
+| -------------------- | ------------------------------------------------------------------------------------------- |
+| API documentation    | http://localhost:8080/swagger-ui.html                                                       |
+| Health check         | http://localhost:8080/actuator/health                                                       |
+| Coverage report      | `backend/target/site/jacoco/index.html` (after `mvn verify`)                                 |
+| Demo users (`dev`)   | `admin@pitshield.dev`, `asesor@pitshield.dev`, `tecnico@pitshield.dev`, `plataforma@pitshield.dev` · password `PitShield2026*` |
+
+**Try it**
+
+```bash
+# Log in and keep the token
+TOKEN=$(curl -s -X POST http://localhost:8080/api/v1/autenticacion/inicio-sesion \
+  -H "Content-Type: application/json" \
+  -d '{"correo":"asesor@pitshield.dev","contrasena":"PitShield2026*"}' | jq -r .token)
+
+# Register a vehicle
+curl -s -X POST http://localhost:8080/api/v1/vehiculos \
+  -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" \
+  -d '{"placa":"ABC123","marca":"Mazda","modelo":"3 Touring","anio":2020,"tipoUso":"PARTICULAR","kilometraje":45000}'
+```
+
+**Configuration** (environment variables, with local defaults): `PITSHIELD_DB_URL`, `PITSHIELD_DB_USUARIO`, `PITSHIELD_DB_CONTRASENA`, `PITSHIELD_JWT_SECRETO` (required outside local development) and `PITSHIELD_CORS_ORIGENES`.
+
+---
+
 ## 🗺️ Roadmap
 
 - [x] Repository initialization and scope definition
 - [x] Requirements and user stories in Spanish and English
 - [x] Tech stack selection
 - [ ] Architecture and database design (entity-relationship diagram and API contract)
-- [ ] Project setup: backend, frontend, Docker and CI
+- [x] Backend setup: Spring Boot, PostgreSQL with Flyway, JWT security, Docker and CI
+- [x] First stories: login and lockout (HU-001, RN-07), vehicle registration and search (HU-008, HU-009)
+- [ ] Frontend setup: React, TypeScript and Vite
 - [ ] **MVP:** access and roles, workshops, customers and vehicles, scheduling, work orders, inventory, invoicing and in-person payments
 - [ ] **Release 2:** online payments, electronic invoicing, warranties and microinsurance, claims, customer portal and notifications
 - [ ] **Release 3:** reports and AI agents

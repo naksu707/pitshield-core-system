@@ -14,10 +14,12 @@
 ![Docker](https://img.shields.io/badge/Docker-2496ED?style=flat-square&logo=docker&logoColor=white)
 ![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-2088FF?style=flat-square&logo=githubactions&logoColor=white)
 
+[![Backend](https://github.com/naksu707/pitshield-core-system/actions/workflows/backend.yml/badge.svg)](https://github.com/naksu707/pitshield-core-system/actions/workflows/backend.yml)
+
 </div>
 
 > [!NOTE]
-> **Estado: fase de diseño 🚧** · Los requerimientos, las historias de usuario y el stack tecnológico están definidos. Sigue el diseño de la arquitectura y de la base de datos, y después el MVP.
+> **Estado: en desarrollo 🚧** · Los requerimientos, las historias de usuario y el stack tecnológico están definidos, y la base del backend está lista: inicio de sesión con JWT y roles, aislamiento entre talleres y registro de vehículos. Sigue el MVP.
 
 ---
 
@@ -168,13 +170,56 @@ El desarrollo se hace **en español**; la documentación se publica en español 
 
 ---
 
+## ▶️ Ejecutar el backend
+
+**Requisitos:** Java 21, Maven y Docker Desktop (abierto).
+
+```bash
+# 1. Iniciar PostgreSQL
+docker compose up -d
+
+# 2. Iniciar la API (http://localhost:8080)
+cd backend
+mvn spring-boot:run
+
+# 3. Ejecutar todas las pruebas (Docker debe estar abierto: las de integración levantan su propio PostgreSQL)
+mvn verify
+```
+
+| Qué                        | Dónde                                                                                     |
+| -------------------------- | ----------------------------------------------------------------------------------------- |
+| Documentación de la API    | http://localhost:8080/swagger-ui.html                                                     |
+| Estado del servicio        | http://localhost:8080/actuator/health                                                     |
+| Informe de cobertura       | `backend/target/site/jacoco/index.html` (después de `mvn verify`)                          |
+| Usuarios de demostración (`dev`) | `admin@pitshield.dev`, `asesor@pitshield.dev`, `tecnico@pitshield.dev`, `plataforma@pitshield.dev` · contraseña `PitShield2026*` |
+
+**Pruébalo**
+
+```bash
+# Iniciar sesión y guardar el token
+TOKEN=$(curl -s -X POST http://localhost:8080/api/v1/autenticacion/inicio-sesion \
+  -H "Content-Type: application/json" \
+  -d '{"correo":"asesor@pitshield.dev","contrasena":"PitShield2026*"}' | jq -r .token)
+
+# Registrar un vehículo
+curl -s -X POST http://localhost:8080/api/v1/vehiculos \
+  -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" \
+  -d '{"placa":"ABC123","marca":"Mazda","modelo":"3 Touring","anio":2020,"tipoUso":"PARTICULAR","kilometraje":45000}'
+```
+
+**Configuración** (variables de entorno, con valores por defecto para local): `PITSHIELD_DB_URL`, `PITSHIELD_DB_USUARIO`, `PITSHIELD_DB_CONTRASENA`, `PITSHIELD_JWT_SECRETO` (obligatoria fuera del desarrollo local) y `PITSHIELD_CORS_ORIGENES`.
+
+---
+
 ## 🗺️ Hoja de ruta
 
 - [x] Inicialización del repositorio y alcance del proyecto
 - [x] Requerimientos e historias de usuario en español e inglés
 - [x] Definición del stack tecnológico
 - [ ] Diseño de la arquitectura y de la base de datos (diagrama entidad-relación y contrato de la API)
-- [ ] Configuración del proyecto: backend, frontend, Docker e integración continua
+- [x] Configuración del backend: Spring Boot, PostgreSQL con Flyway, seguridad JWT, Docker e integración continua
+- [x] Primeras historias: inicio de sesión y bloqueo (HU-001, RN-07), registro y búsqueda de vehículos (HU-008, HU-009)
+- [ ] Configuración del frontend: React, TypeScript y Vite
 - [ ] **MVP:** acceso y roles, talleres, clientes y vehículos, agenda, órdenes de trabajo, inventario, facturación y pagos presenciales
 - [ ] **Entrega 2:** pagos en línea, factura electrónica, garantías y microseguros, reclamos, portal del cliente y notificaciones
 - [ ] **Entrega 3:** reportes y agentes de IA

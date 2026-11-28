@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: pitshield-core
+  datasource:
+    url: ${PITSHIELD_DB_URL:jdbc:postgresql://localhost:5432/pitshield}
+    username: ${PITSHIELD_DB_USUARIO:pitshield}
+    password: ${PITSHIELD_DB_CONTRASENA:pitshield}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: none
