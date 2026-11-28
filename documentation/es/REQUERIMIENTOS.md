@@ -5,7 +5,7 @@
 | Campo                  | Valor                                                                 |
 | ---------------------- | --------------------------------------------------------------------- |
 | **Producto**           | PitShield Core System                                                 |
-| **Versión**            | 1.0                                                                   |
+| **Versión**            | 1.1                                                                   |
 | **Estado**             | Aprobado para diseño                                                  |
 | **Mercado inicial**    | Colombia (moneda COP, facturación electrónica DIAN)                   |
 | **Historias de usuario** | [`HISTORIAS-USUARIO.md`](HISTORIAS-USUARIO.md)                      |
@@ -38,7 +38,9 @@ Este documento define **qué debe hacer** PitShield Core System y **bajo qué co
 - Agenda, órdenes de trabajo, presupuestos, inventario y compras.
 - Facturación, pagos presenciales y en línea, notas crédito y reembolsos.
 - Garantías extendidas y microseguros: elegibilidad, emisión, coberturas, reclamos y comisiones.
-- Portal web del cliente, notificaciones, reportes y agentes de IA de apoyo.
+- Portal web del cliente y notificaciones.
+- Reportes, estadísticas y analítica para el taller, la plataforma y las aseguradoras.
+- Inteligencia artificial: chatbots para clientes (portal web y WhatsApp) y para el personal del taller, y agentes de apoyo.
 
 **Fuera del alcance (versión 1.0):**
 
@@ -88,6 +90,8 @@ Un usuario puede tener más de un rol dentro de un taller (por ejemplo, Administ
 ---
 
 ## 4. Requerimientos funcionales (RF)
+
+> Los requerimientos se agrupan por módulo. Los que se agregaron después tomaron el siguiente número disponible, por eso algunos módulos no van en orden numérico.
 
 ### Módulo 1 · Autenticación, usuarios y seguridad
 
@@ -179,20 +183,26 @@ Un usuario puede tener más de un rol dentro de un taller (por ejemplo, Administ
 | **RF-39** | El sistema debe generar recordatorios de mantenimiento preventivo por tiempo o kilometraje estimado.                  |
 | **RF-40** | El sistema debe permitir al cliente elegir sus canales de notificación y retirar su autorización para mensajes.       |
 
-### Módulo 11 · Reportes y analítica
+### Módulo 11 · Reportes, estadísticas y analítica
 
 | ID        | Requerimiento                                                                                                          |
 | --------- | ---------------------------------------------------------------------------------------------------------------------- |
 | **RF-41** | El sistema debe mostrar un tablero financiero: ingresos, cartera pendiente, reembolsos y comisiones por periodo.       |
 | **RF-42** | El sistema debe generar reportes operativos (OT, tiempos, servicios) y de inventario (movimientos, stock crítico).     |
 | **RF-43** | El sistema debe permitir exportar los reportes a CSV y PDF.                                                            |
+| **RF-48** | El sistema debe mostrar un tablero de indicadores clave (KPI) del taller con su tendencia y estadísticas de servicios, técnicos y demanda. |
+| **RF-49** | El sistema debe ofrecer al Administrador de Plataforma estadísticas de uso y de negocio de toda la plataforma, con comparaciones anónimas entre talleres. |
+| **RF-50** | El sistema debe ofrecer a cada aseguradora estadísticas de sus coberturas, reclamos y siniestralidad.                  |
 
-### Módulo 12 · Agentes de inteligencia artificial
+### Módulo 12 · Inteligencia artificial y chatbots
 
 | ID        | Requerimiento                                                                                                                                  |
 | --------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
-| **RF-44** | El sistema debe ofrecer agentes de IA de apoyo para diagnóstico, mantenimiento preventivo, atención al cliente, inventario y preanálisis de reclamos. |
+| **RF-44** | El sistema debe ofrecer agentes de IA de apoyo para diagnóstico, mantenimiento preventivo, inventario y preanálisis de reclamos. |
 | **RF-45** | El sistema debe registrar cada interacción relevante con los agentes de IA y si su recomendación fue aceptada o descartada.                   |
+| **RF-51** | El sistema debe ofrecer un chatbot para clientes, en el portal web y por WhatsApp, que responda sobre sus vehículos, citas, órdenes, facturas y coberturas, y que permita agendar, reprogramar y cancelar citas. |
+| **RF-52** | El sistema debe ofrecer un asistente conversacional para el personal del taller que responda preguntas en lenguaje natural sobre los datos e indicadores del taller, según los permisos de cada rol. |
+| **RF-53** | El sistema debe permitir configurar la base de conocimiento del chatbot, transferir la conversación a un asesor y medir la calidad de las conversaciones. |
 
 ### Módulo 13 · Administración de la plataforma
 
@@ -227,6 +237,9 @@ Un usuario puede tener más de un rol dentro de un taller (por ejemplo, Administ
 | **RN-18** | Moneda e impuestos                 | Los valores se manejan en pesos colombianos (COP). El IVA por defecto es 19 % y cada servicio o repuesto puede tener su propia tarifa (incluida exenta).                     |
 | **RN-19** | Datos personales                   | Los datos del cliente solo se tratan con su autorización expresa, según la Ley 1581 de 2012. Las solicitudes del titular se responden en máximo 15 días hábiles.          |
 | **RN-20** | Cancelación con consumo            | Si una OT tiene repuestos ya consumidos, su cancelación requiere facturar lo consumido o registrar una justificación aprobada por el Administrador del Taller.              |
+| **RN-21** | Alcance de los chatbots            | Los chatbots solo usan la información del usuario autenticado y la base de conocimiento del taller, y nunca inventan precios, estados ni coberturas. Solo ejecutan acciones de bajo riesgo (agendar, reprogramar o cancelar citas) y siempre con la confirmación del usuario. No aprueban presupuestos, no registran pagos ni radican reclamos. |
+| **RN-22** | Traspaso a un asesor               | El chatbot transfiere la conversación a un asesor cuando el cliente lo pide, cuando no entiende la consulta dos veces seguidas o cuando detecta una queja. Fuera del horario de atención registra la solicitud e informa cuándo será atendida. |
+| **RN-23** | Datos agregados                    | La analítica de la plataforma y de las aseguradoras muestra datos agregados. Las comparaciones entre talleres son anónimas y solo se muestran si el grupo tiene al menos 5 talleres. |
 
 ---
 
@@ -249,6 +262,9 @@ Un usuario puede tener más de un rol dentro de un taller (por ejemplo, Administ
 | **RNF-13** | Archivos multimedia    | Fotos JPG/PNG de hasta 10 MB y videos MP4 de hasta 100 MB, guardados en almacenamiento de objetos y servidos con enlaces temporales.                                     |
 | **RNF-14** | API                    | API REST versionada (`/api/v1`) y documentada con OpenAPI.                                                                                                                |
 | **RNF-15** | Portabilidad           | Backend, frontend y base de datos se ejecutan en contenedores Docker. El entorno local se levanta con un solo comando.                                                    |
+| **RNF-16** | Rendimiento de la IA   | El chatbot da su primera respuesta en menos de 5 s (percentil 95). Si el proveedor de IA no responde, el chatbot lo indica y ofrece hablar con un asesor.               |
+| **RNF-17** | Privacidad y costo de la IA | Antes de enviar datos al proveedor de IA se enmascaran documentos, teléfonos y correos. El proveedor no puede usar los datos para entrenar modelos. Cada taller tiene un límite mensual de uso configurable. |
+| **RNF-18** | Analítica              | Los tableros cargan en menos de 3 s con 12 meses de datos y se actualizan al menos cada 15 minutos.                                                                      |
 
 ---
 
@@ -259,6 +275,7 @@ Un usuario puede tener más de un rol dentro de un taller (por ejemplo, Administ
 - Backend en Java con Spring Boot, frontend en React con TypeScript y base de datos PostgreSQL.
 - El desarrollo (código, base de datos, *commits* e *issues*) se hace en español. La documentación se publica en español e inglés.
 - Equipo de 3 desarrolladores, con gestión en GitHub Projects.
+- La IA se integra con Spring AI, para poder cambiar de proveedor de modelo de lenguaje (LLM) sin reescribir el módulo. El proveedor se elige al iniciar la Entrega 3.
 
 **Supuestos**
 
@@ -274,7 +291,7 @@ Un usuario puede tener más de un rol dentro de un taller (por ejemplo, Administ
 | -------------- | ----------------------------------------------------------------------------------------------------------------------- | --------------- |
 | **MVP**        | Acceso y roles, talleres, clientes, vehículos e historial, agenda, órdenes de trabajo, inventario, facturación y pagos presenciales | 1 – 7, 13 (alta de talleres) |
 | **Entrega 2**  | Pagos en línea, factura electrónica, garantías y microseguros, reclamos, portal del cliente y notificaciones          | 7 – 10, 13      |
-| **Entrega 3**  | Reportes, exportaciones y agentes de inteligencia artificial                                                            | 11, 12          |
+| **Entrega 3**  | Estadísticas y analítica, exportaciones, chatbots (portal, WhatsApp y personal) y agentes de inteligencia artificial    | 11, 12          |
 
 La prioridad y la entrega de cada historia de usuario aparecen en [`HISTORIAS-USUARIO.md`](HISTORIAS-USUARIO.md).
 
@@ -303,11 +320,16 @@ La prioridad y la entrega de cada historia de usuario aparecen en [`HISTORIAS-US
 | RF-17         | HU-054                    | RF-41         | HU-040                    |
 | RF-18         | HU-015, HU-019, HU-020    | RF-42         | HU-041, HU-042            |
 | RF-19         | HU-016                    | RF-43         | HU-062                    |
-| RF-20         | HU-017                    | RF-44         | HU-043 – HU-047           |
-| RF-21         | HU-018                    | RF-45         | HU-048                    |
+| RF-20         | HU-017                    | RF-44         | HU-043, HU-044, HU-046, HU-047 |
+| RF-21         | HU-018                    | RF-45         | HU-048, HU-075            |
 | RF-22         | HU-055                    | RF-46         | HU-063                    |
 | RF-23         | HU-021                    | RF-47         | HU-064                    |
-| RF-24         | HU-022, HU-023            |               |                           |
+| RF-24         | HU-022, HU-023            | RF-48         | HU-066, HU-067            |
+|               |                           | RF-49         | HU-068                    |
+|               |                           | RF-50         | HU-069                    |
+|               |                           | RF-51         | HU-045, HU-070, HU-071    |
+|               |                           | RF-52         | HU-073                    |
+|               |                           | RF-53         | HU-072, HU-074, HU-075    |
 
 ---
 
@@ -327,3 +349,8 @@ La prioridad y la entrega de cada historia de usuario aparecen en [`HISTORIAS-US
 | ***Webhook***            | Aviso automático que un servicio externo (por ejemplo, la pasarela de pago) envía a PitShield cuando algo ocurre. |
 | **Idempotencia**         | Propiedad de una operación que, repetida, produce el mismo resultado (evita pagos duplicados).                   |
 | **RBAC**                 | Control de acceso basado en roles.                                                                                |
+| **Chatbot**              | Asistente que conversa en lenguaje natural con el cliente o con el personal.                                     |
+| **LLM**                  | Modelo de lenguaje: la IA que entiende y redacta las respuestas del chatbot.                                      |
+| **KPI**                  | Indicador clave de desempeño, por ejemplo el ticket promedio o la tasa de aprobación de presupuestos.            |
+| **Ticket promedio**      | Valor promedio facturado por orden de trabajo.                                                                    |
+| **Siniestralidad**       | Lo que la aseguradora paga en reclamos dividido entre lo que recibe en primas. Mide el riesgo de un producto.    |

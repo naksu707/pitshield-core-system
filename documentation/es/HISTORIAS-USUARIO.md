@@ -6,7 +6,7 @@
 
 | Campo                 | Valor                                                                                  |
 | --------------------- | -------------------------------------------------------------------------------------- |
-| **Total de HU**       | 65 historias en 13 módulos                                                             |
+| **Total de HU**       | 75 historias en 13 módulos                                                             |
 | **Requerimientos**    | [`REQUERIMIENTOS.md`](REQUERIMIENTOS.md) (RF, RN y RNF citados en cada historia)       |
 | **Prioridad**         | Alta (imprescindible para su entrega) · Media (importante) · Baja (deseable)           |
 | **Entregas**          | MVP · Entrega 2 · Entrega 3 (ver el plan de entregas en los requerimientos)            |
@@ -27,8 +27,8 @@
 8. [Módulo 8: Garantías, Microseguros y Reclamos](#8-módulo-8-garantías-microseguros-y-reclamos)
 9. [Módulo 9: Portal del Cliente](#9-módulo-9-portal-del-cliente)
 10. [Módulo 10: Notificaciones Automáticas](#10-módulo-10-notificaciones-automáticas)
-11. [Módulo 11: Reportes y Analítica](#11-módulo-11-reportes-y-analítica)
-12. [Módulo 12: Agentes de Inteligencia Artificial](#12-módulo-12-agentes-de-inteligencia-artificial)
+11. [Módulo 11: Reportes, Estadísticas y Analítica](#11-módulo-11-reportes-estadísticas-y-analítica)
+12. [Módulo 12: Inteligencia Artificial y Chatbots](#12-módulo-12-inteligencia-artificial-y-chatbots)
 13. [Módulo 13: Administración de la Plataforma](#13-módulo-13-administración-de-la-plataforma)
 14. [Reglas transversales de aceptación](#reglas-transversales-de-aceptación)
 15. [Definición de terminado](#definición-de-terminado)
@@ -1157,7 +1157,7 @@ Escenario: Retiro de autorización para recordatorios
 
 ---
 
-# 11. Módulo 11: Reportes y Analítica
+# 11. Módulo 11: Reportes, Estadísticas y Analítica
 
 ### HU-040: Dashboard Financiero
 * **Como:** Dueño / Gerente del Taller
@@ -1221,11 +1221,109 @@ Escenario: Reporte sin datos
   ENTONCES el sistema informa que no hay datos para exportar.
 ```
 
+### HU-066: Tablero de Indicadores Clave del Taller
+* **Como:** Dueño / Gerente del Taller
+* **Quiero:** Ver los indicadores clave del taller con su tendencia
+* **Para:** Saber de un vistazo cómo va el negocio y dónde mejorar.
+* **Prioridad:** Media · **Entrega:** Entrega 3 · **Requerimientos:** RF-48
+
+```gherkin
+Escenario: Consulta de indicadores
+  DADO QUE existen órdenes, facturas y coberturas registradas
+  CUANDO el gerente abra el tablero y seleccione un periodo
+  ENTONCES el sistema muestra el ticket promedio, la tasa de aprobación de presupuestos, la tasa de clientes que regresan, el tiempo promedio de atención y el porcentaje de servicios vendidos con cobertura
+  Y compara cada indicador con el periodo anterior.
+
+Escenario: Detalle de un indicador
+  DADO QUE el gerente ve un indicador en el tablero
+  CUANDO haga clic en él
+  ENTONCES el sistema muestra su gráfica por día, semana o mes
+  Y los registros que lo componen.
+
+Escenario: Periodo sin datos
+  DADO QUE el periodo seleccionado no tiene registros
+  CUANDO el gerente consulte el tablero
+  ENTONCES el sistema indica que no hay datos para ese periodo
+  Y no muestra valores en cero que puedan confundirse con resultados reales.
+```
+
+### HU-067: Estadísticas de Servicios y Técnicos
+* **Como:** Dueño / Gerente del Taller
+* **Quiero:** Ver qué servicios se venden más y cómo rinde cada técnico
+* **Para:** Planear el personal, el inventario y las promociones.
+* **Prioridad:** Media · **Entrega:** Entrega 3 · **Requerimientos:** RF-48
+
+```gherkin
+Escenario: Servicios más solicitados
+  DADO QUE existen servicios facturados
+  CUANDO el gerente consulte un periodo
+  ENTONCES el sistema muestra el ranking de servicios por cantidad e ingresos
+  Y su participación porcentual en el total.
+
+Escenario: Productividad por técnico
+  DADO QUE los técnicos registraron tiempos de mano de obra
+  CUANDO el gerente consulte un periodo
+  ENTONCES el sistema muestra por técnico las horas registradas, las OT terminadas y el tiempo real frente al estimado.
+
+Escenario: Comportamiento por día y hora
+  DADO QUE existen citas y órdenes registradas
+  CUANDO el gerente consulte la demanda
+  ENTONCES el sistema muestra un mapa de calor por día de la semana y franja horaria.
+```
+
+### HU-068: Analítica de la Plataforma
+* **Como:** Administrador de Plataforma
+* **Quiero:** Ver estadísticas de uso y de negocio de toda la plataforma
+* **Para:** Tomar decisiones sobre el producto y medir su crecimiento.
+* **Prioridad:** Media · **Entrega:** Entrega 3 · **Requerimientos:** RF-49, RN-23
+
+```gherkin
+Escenario: Indicadores de la plataforma
+  DADO QUE existen talleres activos
+  CUANDO el Administrador de Plataforma abra la analítica
+  ENTONCES el sistema muestra talleres activos, órdenes por mes, ingresos por comisiones, coberturas emitidas y uso de los chatbots.
+
+Escenario: Comparación anónima entre talleres
+  DADO QUE un grupo de comparación tiene al menos 5 talleres
+  CUANDO el administrador compare indicadores entre talleres
+  ENTONCES el sistema muestra promedios y percentiles
+  Y no revela el nombre ni los datos de ningún taller.
+
+Escenario: Grupo demasiado pequeño
+  DADO QUE un grupo de comparación tiene menos de 5 talleres
+  CUANDO el administrador intente compararlo
+  ENTONCES el sistema no muestra la comparación
+  Y explica que el grupo es muy pequeño para proteger la confidencialidad.
+```
+
+### HU-069: Analítica de Coberturas y Siniestralidad
+* **Como:** Auditor de la Aseguradora
+* **Quiero:** Ver estadísticas de las coberturas y reclamos de mi aseguradora
+* **Para:** Evaluar el riesgo y ajustar los productos.
+* **Prioridad:** Media · **Entrega:** Entrega 3 · **Requerimientos:** RF-50, RN-23
+
+```gherkin
+Escenario: Indicadores de coberturas
+  DADO QUE existen coberturas emitidas con la aseguradora
+  CUANDO el auditor consulte un periodo
+  ENTONCES el sistema muestra coberturas vigentes, primas emitidas, reclamos por estado, valor pagado y siniestralidad (valor pagado sobre primas).
+
+Escenario: Fallas más frecuentes
+  DADO QUE existen reclamos aprobados
+  CUANDO el auditor consulte las causas
+  ENTONCES el sistema muestra las fallas más frecuentes por componente, marca y modelo.
+
+Escenario: Alcance de la información
+  DADO QUE el auditor pertenece a la Aseguradora A
+  CUANDO consulte la analítica
+  ENTONCES el sistema solo muestra coberturas y reclamos de la Aseguradora A.
+```
+
 ---
 
-# 12. Módulo 12: Agentes de Inteligencia Artificial
+# 12. Módulo 12: Inteligencia Artificial y Chatbots
 
-> Los agentes de IA deben funcionar como **asistentes de apoyo**. Las decisiones técnicas, financieras, de cobertura y aprobación de reclamos que tengan impacto real deben permanecer bajo control de usuarios autorizados.
+> El módulo incluye **chatbots** para clientes (portal web y WhatsApp) y para el personal del taller, y **agentes de apoyo** para diagnóstico, mantenimiento, inventario y reclamos. Los agentes de IA deben funcionar como **asistentes de apoyo**. Las decisiones técnicas, financieras, de cobertura y aprobación de reclamos que tengan impacto real deben permanecer bajo control de usuarios autorizados.
 
 ### HU-043: Agente IA de Diagnóstico Asistido
 * **Como:** Técnico del Taller
@@ -1261,11 +1359,11 @@ Escenario: Recomendación preventiva
   Y las relaciona con kilometraje, tiempo o historial disponible.
 ```
 
-### HU-045: Agente IA de Atención al Cliente
+### HU-045: Chatbot IA de Atención al Cliente
 * **Como:** Cliente
 * **Quiero:** Consultar información del servicio mediante un asistente IA
 * **Para:** Obtener respuestas rápidas sobre mis vehículos, OT, citas y garantías.
-* **Prioridad:** Baja · **Entrega:** Entrega 3 · **Requerimientos:** RF-44, RN-15
+* **Prioridad:** Media · **Entrega:** Entrega 3 · **Requerimientos:** RF-51, RN-15, RN-21
 
 ```gherkin
 Escenario: Consulta autorizada
@@ -1326,6 +1424,148 @@ Escenario: Registro de interacción
   CUANDO el agente genere una recomendación
   ENTONCES el sistema registra usuario, fecha, agente, contexto permitido y resultado de la interacción
   Y permite identificar si la recomendación fue aceptada o descartada.
+```
+
+### HU-070: Agendamiento de Citas por Chatbot
+* **Como:** Cliente
+* **Quiero:** Agendar, reprogramar o cancelar una cita conversando con el chatbot
+* **Para:** Hacerlo a cualquier hora sin llamar al taller.
+* **Prioridad:** Media · **Entrega:** Entrega 3 · **Requerimientos:** RF-51, RN-21
+
+```gherkin
+Escenario: Cita agendada
+  DADO QUE el cliente está autenticado y tiene un vehículo registrado
+  CUANDO le pida al chatbot una cita para un servicio
+  ENTONCES el chatbot le muestra los horarios disponibles
+  Y crea la cita solo después de que el cliente confirme el horario elegido.
+
+Escenario: Sin disponibilidad
+  DADO QUE no hay horarios disponibles en la fecha pedida
+  CUANDO el cliente la solicite
+  ENTONCES el chatbot le ofrece las fechas disponibles más cercanas.
+
+Escenario: Reprogramación
+  DADO QUE el cliente tiene una cita activa
+  CUANDO le pida al chatbot cambiarla
+  ENTONCES el chatbot muestra nuevos horarios
+  Y actualiza la cita después de la confirmación del cliente.
+```
+
+### HU-071: Chatbot por WhatsApp
+* **Como:** Cliente
+* **Quiero:** Hablar con el chatbot del taller por WhatsApp
+* **Para:** Consultar mi servicio desde la aplicación que ya uso.
+* **Prioridad:** Media · **Entrega:** Entrega 3 · **Requerimientos:** RF-51, RN-19, RN-21
+
+```gherkin
+Escenario: Cliente identificado
+  DADO QUE el número de WhatsApp coincide con el de un cliente que autorizó el canal
+  CUANDO escriba al número del taller
+  ENTONCES el chatbot lo saluda por su nombre
+  Y responde sobre sus vehículos, citas y órdenes.
+
+Escenario: Número no registrado
+  DADO QUE el número no pertenece a ningún cliente del taller
+  CUANDO la persona escriba
+  ENTONCES el chatbot solo responde preguntas generales del taller
+  Y no muestra información de ningún cliente.
+
+Escenario: Verificación antes de datos sensibles
+  DADO QUE el cliente pide información de una factura o cobertura
+  CUANDO el chatbot vaya a responder
+  ENTONCES le envía un código de verificación
+  Y solo muestra la información después de validarlo.
+```
+
+### HU-072: Traspaso del Chatbot a un Asesor
+* **Como:** Cliente
+* **Quiero:** Que el chatbot me pase con una persona cuando lo necesite
+* **Para:** Resolver lo que el chatbot no puede.
+* **Prioridad:** Alta · **Entrega:** Entrega 3 · **Requerimientos:** RF-53, RN-22
+
+```gherkin
+Escenario: El cliente pide un asesor
+  DADO QUE el cliente está conversando con el chatbot
+  CUANDO pida hablar con una persona
+  ENTONCES el chatbot transfiere la conversación a un asesor disponible
+  Y el asesor ve todo el historial de la conversación.
+
+Escenario: El chatbot no entiende
+  DADO QUE el chatbot no entendió la consulta dos veces seguidas
+  CUANDO el cliente escriba de nuevo sin éxito
+  ENTONCES el chatbot ofrece pasarlo con un asesor.
+
+Escenario: Fuera del horario de atención
+  DADO QUE no hay asesores en horario de atención
+  CUANDO el cliente pida hablar con una persona
+  ENTONCES el chatbot registra la solicitud
+  Y le informa cuándo será atendido.
+```
+
+### HU-073: Asistente Conversacional para el Personal
+* **Como:** Personal del Taller
+* **Quiero:** Hacer preguntas en lenguaje natural sobre los datos del taller
+* **Para:** Obtener información sin buscar en varias pantallas.
+* **Prioridad:** Baja · **Entrega:** Entrega 3 · **Requerimientos:** RF-52, RN-06, RN-21
+
+```gherkin
+Escenario: Pregunta respondida
+  DADO QUE el asesor está autenticado
+  CUANDO pregunte "¿Qué vehículos están listos para entrega hoy?"
+  ENTONCES el asistente responde con la lista
+  Y muestra enlaces a cada orden de trabajo.
+
+Escenario: Pregunta fuera de sus permisos
+  DADO QUE un técnico no tiene acceso a la información financiera
+  CUANDO le pregunte al asistente por los ingresos del mes
+  ENTONCES el asistente indica que no tiene permiso para esa información.
+
+Escenario: Origen de la respuesta
+  DADO QUE el asistente responde con cifras
+  CUANDO el usuario vea la respuesta
+  ENTONCES el asistente indica de qué reporte o consulta salen los datos.
+```
+
+### HU-074: Base de Conocimiento del Chatbot
+* **Como:** Administrador del Taller
+* **Quiero:** Configurar las preguntas frecuentes, horarios, políticas y precios de referencia que usa el chatbot
+* **Para:** Que responda con la información correcta de mi taller.
+* **Prioridad:** Media · **Entrega:** Entrega 3 · **Requerimientos:** RF-53
+
+```gherkin
+Escenario: Nueva pregunta frecuente
+  DADO QUE el administrador está en la configuración del chatbot
+  CUANDO agregue una pregunta y su respuesta
+  ENTONCES el chatbot usa esa información en sus siguientes respuestas.
+
+Escenario: Información desactualizada
+  DADO QUE el administrador cambió el horario del taller
+  CUANDO un cliente pregunte por el horario
+  ENTONCES el chatbot responde con el horario nuevo.
+
+Escenario: Pregunta sin respuesta en la base
+  DADO QUE la base de conocimiento no tiene la respuesta
+  CUANDO un cliente pregunte
+  ENTONCES el chatbot dice que no tiene esa información y ofrece pasarlo con un asesor
+  Y registra la pregunta para que el administrador la agregue.
+```
+
+### HU-075: Calificación y Analítica de Conversaciones
+* **Como:** Administrador del Taller
+* **Quiero:** Ver cómo le va al chatbot con los clientes
+* **Para:** Mejorar sus respuestas y la atención.
+* **Prioridad:** Baja · **Entrega:** Entrega 3 · **Requerimientos:** RF-45, RF-53
+
+```gherkin
+Escenario: Calificación del cliente
+  DADO QUE terminó una conversación con el chatbot
+  CUANDO el cliente la califique de 1 a 5
+  ENTONCES el sistema guarda la calificación junto con la conversación.
+
+Escenario: Analítica del chatbot
+  DADO QUE existen conversaciones registradas
+  CUANDO el administrador consulte un periodo
+  ENTONCES el sistema muestra cantidad de conversaciones, temas más consultados, porcentaje resuelto sin un asesor, citas agendadas por el chatbot y calificación promedio.
 ```
 
 ---
@@ -1410,6 +1650,7 @@ Estas reglas aplican a todas las HU cuando correspondan:
 - Las operaciones relevantes deben generar registros de auditoría.
 - La información del cliente y del vehículo solo debe ser visible para usuarios autorizados.
 - Las evidencias multimedia deben conservar su relación con el vehículo, OT o reclamo correspondiente.
+- Los chatbots y agentes IA solo usan información a la que el usuario tiene acceso y nunca inventan datos que no puedan verificar (RN-21).
 - Los agentes IA deben presentar sus resultados como asistencia y no como sustitución de decisiones humanas cuando exista impacto técnico, financiero, contractual o de cobertura.
 - Los errores de integraciones externas deben registrarse y permitir seguimiento.
 - Las notificaciones deben evitar envíos duplicados.

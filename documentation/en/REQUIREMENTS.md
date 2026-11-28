@@ -5,7 +5,7 @@
 | Field              | Value                                                   |
 | ------------------ | ------------------------------------------------------- |
 | **Product**        | PitShield Core System                                   |
-| **Version**        | 1.0                                                     |
+| **Version**        | 1.1                                                     |
 | **Status**         | Approved for design                                     |
 | **Initial market** | Colombia (COP currency, DIAN electronic invoicing)      |
 | **User stories**   | [`USER-STORY.md`](USER-STORY.md)                        |
@@ -40,7 +40,9 @@ This document defines **what** PitShield Core System must do and **under which c
 - Scheduling, work orders, quotes, inventory and purchasing.
 - Invoicing, in-person and online payments, credit notes and refunds.
 - Extended warranties and microinsurance: eligibility, issuance, coverage, claims and commissions.
-- Customer web portal, notifications, reports and AI support agents.
+- Customer web portal and notifications.
+- Reports, statistics and analytics for the workshop, the platform and the insurers.
+- Artificial intelligence: chatbots for customers (web portal and WhatsApp) and for workshop staff, plus support agents.
 
 **Out of scope (version 1.0):**
 
@@ -90,6 +92,8 @@ A user can hold more than one role within a workshop (for example, Administrator
 ---
 
 ## 4. Functional requirements (RF)
+
+> Requirements are grouped by module. Requirements added later took the next available number, so some modules are not in numerical order.
 
 ### Module 1 · Authentication, users and security
 
@@ -181,20 +185,26 @@ A user can hold more than one role within a workshop (for example, Administrator
 | **RF-39** | The system must create preventive maintenance reminders based on time or estimated mileage.               |
 | **RF-40** | The system must let customers choose their notification channels and withdraw consent to messages.        |
 
-### Module 11 · Reports and analytics
+### Module 11 · Reports, statistics and analytics
 
 | ID        | Requirement                                                                                                     |
 | --------- | --------------------------------------------------------------------------------------------------------------- |
 | **RF-41** | The system must show a financial dashboard: revenue, outstanding balances, refunds and commissions by period.   |
 | **RF-42** | The system must produce operational reports (work orders, times, services) and inventory reports (movements, critical stock). |
 | **RF-43** | The system must export reports to CSV and PDF.                                                                  |
+| **RF-48** | The system must show a dashboard of the workshop's key indicators (KPIs) with their trend, plus statistics on services, technicians and demand. |
+| **RF-49** | The system must give the Platform Administrator usage and business statistics for the whole platform, with anonymous comparisons between workshops. |
+| **RF-50** | The system must give each insurer statistics on its coverage, claims and loss ratio.                            |
 
-### Module 12 · Artificial intelligence agents
+### Module 12 · Artificial intelligence and chatbots
 
 | ID        | Requirement                                                                                                                              |
 | --------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| **RF-44** | The system must offer AI support agents for diagnosis, preventive maintenance, customer service, inventory and claim pre-analysis.       |
+| **RF-44** | The system must offer AI support agents for diagnosis, preventive maintenance, inventory and claim pre-analysis.       |
 | **RF-45** | The system must log every relevant interaction with the AI agents and whether their recommendation was accepted or dismissed.            |
+| **RF-51** | The system must offer a customer chatbot, on the web portal and on WhatsApp, that answers about their vehicles, appointments, work orders, invoices and coverage, and lets them book, reschedule and cancel appointments. |
+| **RF-52** | The system must offer a conversational assistant for workshop staff that answers natural-language questions about the workshop's data and indicators, according to each role's permissions. |
+| **RF-53** | The system must let the workshop configure the chatbot's knowledge base, hand conversations off to an advisor and measure conversation quality. |
 
 ### Module 13 · Platform administration
 
@@ -229,6 +239,9 @@ A user can hold more than one role within a workshop (for example, Administrator
 | **RN-18** | Currency and taxes            | Amounts are in Colombian pesos (COP). Default VAT is 19 %, and each service or part can have its own rate (including exempt).                                                  |
 | **RN-19** | Personal data                 | Customer data is only processed with explicit consent, under Colombian Law 1581 of 2012. Data owner requests are answered within 15 business days.                            |
 | **RN-20** | Cancellation after consumption | If a work order already consumed parts, cancelling it requires invoicing what was used or a justification approved by the Workshop Administrator.                             |
+| **RN-21** | Chatbot scope                 | Chatbots only use the logged-in user's information and the workshop's knowledge base, and never make up prices, statuses or coverage. They only perform low-risk actions (booking, rescheduling or cancelling appointments), always with the user's confirmation. They do not approve quotes, record payments or file claims. |
+| **RN-22** | Hand-off to an advisor        | The chatbot transfers the conversation to an advisor when the customer asks, when it fails to understand twice in a row or when it detects a complaint. Outside opening hours it records the request and says when it will be handled. |
+| **RN-23** | Aggregated data               | Platform and insurer analytics show aggregated data. Comparisons between workshops are anonymous and only shown when the group has at least 5 workshops. |
 
 ---
 
@@ -251,6 +264,9 @@ A user can hold more than one role within a workshop (for example, Administrator
 | **RNF-13** | Media files           | JPG/PNG photos up to 10 MB and MP4 videos up to 100 MB, stored in object storage and served through temporary links.                                              |
 | **RNF-14** | API                   | Versioned REST API (`/api/v1`) documented with OpenAPI.                                                                                                             |
 | **RNF-15** | Portability           | Backend, frontend and database run in Docker containers. The local environment starts with a single command.                                                       |
+| **RNF-16** | AI performance        | The chatbot gives its first answer in under 5 s (95th percentile). If the AI provider does not respond, the chatbot says so and offers an advisor.                |
+| **RNF-17** | AI privacy and cost   | ID numbers, phone numbers and emails are masked before data is sent to the AI provider. The provider cannot use the data to train models. Each workshop has a configurable monthly usage limit. |
+| **RNF-18** | Analytics             | Dashboards load in under 3 s with 12 months of data and are refreshed at least every 15 minutes.                                                                  |
 
 ---
 
@@ -261,6 +277,7 @@ A user can hold more than one role within a workshop (for example, Administrator
 - Backend in Java with Spring Boot, frontend in React with TypeScript, and a PostgreSQL database.
 - Development (code, database, commits and issues) is done in Spanish. Documentation is published in Spanish and English.
 - A team of 3 developers, managed with GitHub Projects.
+- AI is integrated through Spring AI, so the language model (LLM) provider can be changed without rewriting the module. The provider is chosen at the start of Release 3.
 
 **Assumptions**
 
@@ -276,7 +293,7 @@ A user can hold more than one role within a workshop (for example, Administrator
 | ------------- | -------------------------------------------------------------------------------------------------------------------- | -------------- |
 | **MVP**       | Access and roles, workshops, customers, vehicles and history, scheduling, work orders, inventory, invoicing and in-person payments | 1 – 7, 13 (workshop onboarding) |
 | **Release 2** | Online payments, electronic invoicing, warranties and microinsurance, claims, customer portal and notifications     | 7 – 10, 13     |
-| **Release 3** | Reports, exports and artificial intelligence agents                                                                  | 11, 12         |
+| **Release 3** | Statistics and analytics, exports, chatbots (portal, WhatsApp and staff) and artificial intelligence agents          | 11, 12         |
 
 The priority and release of each user story are listed in [`USER-STORY.md`](USER-STORY.md).
 
@@ -305,11 +322,16 @@ The priority and release of each user story are listed in [`USER-STORY.md`](USER
 | RF-17       | HU-054                    | RF-41       | HU-040                    |
 | RF-18       | HU-015, HU-019, HU-020    | RF-42       | HU-041, HU-042            |
 | RF-19       | HU-016                    | RF-43       | HU-062                    |
-| RF-20       | HU-017                    | RF-44       | HU-043 – HU-047           |
-| RF-21       | HU-018                    | RF-45       | HU-048                    |
+| RF-20       | HU-017                    | RF-44       | HU-043, HU-044, HU-046, HU-047 |
+| RF-21       | HU-018                    | RF-45       | HU-048, HU-075            |
 | RF-22       | HU-055                    | RF-46       | HU-063                    |
 | RF-23       | HU-021                    | RF-47       | HU-064                    |
-| RF-24       | HU-022, HU-023            |             |                           |
+| RF-24       | HU-022, HU-023            | RF-48       | HU-066, HU-067            |
+|             |                           | RF-49       | HU-068                    |
+|             |                           | RF-50       | HU-069                    |
+|             |                           | RF-51       | HU-045, HU-070, HU-071    |
+|             |                           | RF-52       | HU-073                    |
+|             |                           | RF-53       | HU-072, HU-074, HU-075    |
 
 ---
 
@@ -329,3 +351,8 @@ The priority and release of each user story are listed in [`USER-STORY.md`](USER
 | **Webhook**             | An automatic message an external service (for example, the payment gateway) sends to PitShield when something happens. |
 | **Idempotency**         | A property of an operation that gives the same result when repeated (it prevents duplicate payments).     |
 | **RBAC**                | Role-based access control.                                                                                |
+| **Chatbot**             | An assistant that talks in natural language with the customer or the staff.                               |
+| **LLM**                 | Large language model: the AI that understands questions and writes the chatbot's answers.                |
+| **KPI**                 | Key performance indicator, for example the average ticket or the quote approval rate.                     |
+| **Average ticket**      | The average amount invoiced per work order.                                                               |
+| **Loss ratio**          | What the insurer pays in claims divided by what it receives in premiums. It measures a product's risk.   |
