@@ -1,63 +1,329 @@
-## ¿Por qué PitShield? Necesidades del Mercado y Propuesta de Valor
+# Especificación de Requerimientos · PitShield Core System
 
-Los talleres mecánicos y centros de *detailing* tradicionales enfrentan tres grandes problemas operativos y financieros. **PitShield** resuelve directamente estos desafíos integrando soluciones Fintech en su plataforma.
+> 🇪🇸 Español · [🇬🇧 English](../en/REQUIREMENTS.md)
 
----
-
-### 1. La Falta de Confianza del Cliente
-* **El Problema:** El sector de servicios automotrices sufre de una desconfianza generalizada. Los propietarios de vehículos suelen dudar sobre si los repuestos facturados realmente fueron instalados, si los precios son justos o si los diagnósticos son legítimos.
-* **La Solución PitShield:** Un **Historial Digital del Vehículo** inmutable y transparente. PitShield genera una hoja de vida digital verificable que incluye seguimiento del kilometraje, registro de repuestos instalados y evidencia en fotos o video de cada servicio.
-
----
-
-### 2. Desorden Administrativo y Pérdida de Margen
-* **El Problema:** Muchos administradores de talleres todavía dependen del papel, hojas de cálculo de Excel o sistemas de punto de venta genéricos. Estas herramientas carecen de integración con normativas fiscales, flujos de pago digitales y seguimiento financiero automático, lo que genera fuga de dinero y fatiga administrativa.
-* **La Solución PitShield:** Un **Módulo Fintech de Facturación y Cobros** integrado. PitShield agiliza la facturación electrónica, automatiza los costos por orden de trabajo, se conecta sin problemas con pasarelas de pago digitales y ofrece métricas financieras en tiempo real.
+| Campo                  | Valor                                                                 |
+| ---------------------- | --------------------------------------------------------------------- |
+| **Producto**           | PitShield Core System                                                 |
+| **Versión**            | 1.0                                                                   |
+| **Estado**             | Aprobado para diseño                                                  |
+| **Mercado inicial**    | Colombia (moneda COP, facturación electrónica DIAN)                   |
+| **Historias de usuario** | [`HISTORIAS-USUARIO.md`](HISTORIAS-USUARIO.md)                      |
 
 ---
 
-### 3. Riesgo Operativo en Garantías y Oportunidades de Venta Perdidas
-* **El Problema:** Cuando un repuesto o trabajo falla después del servicio, el taller debe asumir el costo de la reparación por su cuenta o arriesgarse a perder al cliente. Además, los talleres tradicionales carecen de productos financieros recurrentes para aumentar el valor promedio de venta (*upselling*).
-* **La Solución PitShield:** **Microseguros y Garantías Extendidas Embebidas (*Embedded Insurance*)**. PitShield permite a los talleres emitir planes de protección extendida respaldados por aseguradoras directamente en el momento del cobro. Si una pieza cubierta falla dentro del periodo de garantía, el reclamo se gestiona de forma digital: protegiendo el margen del taller y generando una nueva fuente de ingresos por comisión.
+## Contenido
+
+1. [Propósito y alcance](#1-propósito-y-alcance)
+2. [¿Por qué PitShield? Necesidades del mercado](#2-por-qué-pitshield-necesidades-del-mercado)
+3. [Roles del sistema](#3-roles-del-sistema)
+4. [Requerimientos funcionales (RF)](#4-requerimientos-funcionales-rf)
+5. [Reglas de negocio (RN)](#5-reglas-de-negocio-rn)
+6. [Requerimientos no funcionales (RNF)](#6-requerimientos-no-funcionales-rnf)
+7. [Restricciones y supuestos](#7-restricciones-y-supuestos)
+8. [Plan de entregas](#8-plan-de-entregas)
+9. [Matriz de trazabilidad](#9-matriz-de-trazabilidad)
+10. [Glosario](#10-glosario)
 
 ---
 
-##  Requerimientos y Reglas de Negocio Completos
+## 1. Propósito y alcance
 
-### A. Requerimientos Funcionales (RF)
+Este documento define **qué debe hacer** PitShield Core System y **bajo qué condiciones**. Es la base para el diseño, el desarrollo, las pruebas automáticas y las pruebas manuales.
 
-| ID | Módulo | Descripción |
-| :--- | :--- | :--- |
-| **RF-01** | **Gestión de Vehículos** | El sistema debe registrar y consultar el historial por Placa o VIN, incluyendo marca, modelo, año y especificaciones técnicas. |
-| **RF-02** | **Órdenes de Trabajo** | El sistema debe gestionar el ciclo de vida del servicio (Borrador, Pendiente de Aprobación, En Proceso, Listo para Entrega, Facturado). |
-| **RF-03** | **Facturación Fintech** | El sistema debe convertir órdenes de trabajo en facturas digitales con desglose de mano de obra, repuestos, impuestos y descuentos. |
-| **RF-04** | **Pagos Integrados** | El sistema debe integrar pasarelas de pago para cobrar vía tarjeta, transferencia y links de pago automáticos por SMS/WhatsApp. |
-| **RF-05** | **Emisión de Garantías** | El sistema debe evaluar elegibilidad y emitir microseguros/garantías extendidas con un solo clic durante el cobro. |
-| **RF-06** | **Gestión de Reclamos** | El sistema debe proveer un flujo para radicar, revisar y liquidar reclamos por fallas en piezas o servicio con evidencia fotográfica. |
-| **RF-07** | **Inventario de Repuestos** | El sistema debe controlar existencias de repuestos, costos, precios de venta y descontar stock automáticamente al cerrar la orden. |
-| **RF-08** | **Portal del Cliente** | El sistema debe permitir a los propietarios consultar su historial digital, ver fotos del avance y aprobar cotizaciones de forma remota. |
-| **RF-09** | **Reportes Financieros** | El sistema debe calcular ingresos del taller, comisiones ganadas por venta de microseguros y resúmenes de impuestos. |
+**Dentro del alcance:**
 
----
+- Gestión de talleres mecánicos y centros de *detailing* como clientes de la plataforma (modelo SaaS multi-taller).
+- Clientes, vehículos e historial digital del vehículo.
+- Agenda, órdenes de trabajo, presupuestos, inventario y compras.
+- Facturación, pagos presenciales y en línea, notas crédito y reembolsos.
+- Garantías extendidas y microseguros: elegibilidad, emisión, coberturas, reclamos y comisiones.
+- Portal web del cliente, notificaciones, reportes y agentes de IA de apoyo.
 
-### B. Reglas de Negocio (RN)
+**Fuera del alcance (versión 1.0):**
 
-| ID | Regla | Descripción y Restricciones |
-| :--- | :--- | :--- |
-| **RN-01** | **Elegibilidad de Garantía** | El microseguro solo aplica para vehículos con menos de 120,000 km, menos de 10 años de antigüedad y uso particular (no servicio público/flotas). |
-| **RN-02** | **Inmutabilidad** | Una vez que una orden o factura pase a estado "Pagada", sus datos no podrán editarse ni borrarse. Cambios requieren notas crédito auditables. |
-| **RN-03** | **Comisión de Plataforma** | PitShield retendrá automáticamente un % de comisión por cada garantía emitida y transacción procesada antes de liquidar al taller. |
-| **RN-04** | **Inspección Obligatoria** | Para activar la garantía extendida, el técnico debe adjuntar al menos 2 fotos del repuesto nuevo instalado y registrar el kilometraje exacto. |
-| **RN-05** | **Validación de Inventario** | Una orden de trabajo no puede pasar a "En Proceso" si los repuestos requeridos no cuentan con stock suficiente en el módulo de inventario. |
+- Aplicaciones móviles nativas (el portal del cliente es web responsive).
+- Contabilidad completa (nómina, balances, declaración de impuestos). PitShield entrega los reportes que necesita el contador.
+- Emisión propia de pólizas: la aseguradora aliada es quien asume el riesgo; PitShield actúa como canal de venta y gestión.
 
 ---
 
-### C. Requerimientos No Funcionales (RNF)
+## 2. ¿Por qué PitShield? Necesidades del mercado
 
-| ID | Categoría | Criterio de Aceptación / Métrica |
-| :--- | :--- | :--- |
-| **RNF-01** | **Seguridad** | Control de acceso por roles (RBAC) con JWT, cifrado TLS 1.3 y cumplimiento de estándares OWASP Top 10. |
-| **RNF-02** | **Disponibilidad** | Despliegue en la nube que garantice una disponibilidad mínima del 99.5% mensual. |
-| **RNF-03** | **Multi-Tenancy (SaaS)** | Aislamiento lógico estricto de datos: el Taller A jamás podrá ver o consultar datos del Taller B. |
-| **RNF-04** | **Rendimiento** | Las respuestas de la API para consulta de historial e inventario no deben superar los 1.5 segundos. |
-| **RNF-05** | **Cumplimiento Fiscal** | El sistema debe soportar estándares de facturación electrónica local para la firma y envío de documentos fiscales. |
+Los talleres mecánicos y centros de *detailing* tradicionales enfrentan tres grandes problemas operativos y financieros. **PitShield** los resuelve integrando soluciones Fintech en su plataforma.
+
+### 2.1 La falta de confianza del cliente
+
+* **El problema:** el sector sufre de una desconfianza generalizada. Los propietarios dudan de si los repuestos facturados realmente se instalaron, si los precios son justos o si los diagnósticos son legítimos.
+* **La solución:** un **Historial Digital del Vehículo** inmutable y transparente, con kilometraje, repuestos instalados y evidencia en fotos o video de cada servicio.
+
+### 2.2 Desorden administrativo y pérdida de margen
+
+* **El problema:** muchos talleres dependen del papel, hojas de cálculo o puntos de venta genéricos, sin facturación electrónica, pagos digitales ni seguimiento financiero.
+* **La solución:** un **módulo de facturación y cobros** integrado, con facturación electrónica, costeo automático por orden de trabajo, pasarelas de pago y métricas en tiempo real.
+
+### 2.3 Riesgo en garantías y ventas perdidas
+
+* **El problema:** cuando un repuesto o trabajo falla después del servicio, el taller asume el costo o pierde al cliente. Además, no tiene productos recurrentes para aumentar el valor promedio de venta.
+* **La solución:** **garantías extendidas y microseguros embebidos**, emitidos en el momento del cobro y respaldados por una aseguradora. Los reclamos se gestionan de forma digital y el taller gana una comisión por cada producto vendido.
+
+---
+
+## 3. Roles del sistema
+
+| Rol                              | Descripción                                                                                |
+| -------------------------------- | ------------------------------------------------------------------------------------------ |
+| **Administrador de Plataforma**  | Equipo de PitShield. Da de alta talleres y aseguradoras, configura productos y comisiones. |
+| **Administrador del Taller**     | Dueño o gerente. Configura el taller, gestiona usuarios y consulta reportes.               |
+| **Asesor de Servicio**           | Recibe vehículos, crea órdenes de trabajo y presupuestos, y atiende al cliente.            |
+| **Técnico**                      | Diagnostica, registra evidencias, consume repuestos y ejecuta el trabajo.                  |
+| **Cajero**                       | Genera facturas, registra pagos, notas crédito y reembolsos.                               |
+| **Encargado de Inventario**      | Administra repuestos, proveedores y compras.                                               |
+| **Cliente**                      | Propietario del vehículo. Usa el portal para consultar, aprobar y pagar.                   |
+| **Auditor de Aseguradora**       | Revisa y decide los reclamos de garantías y microseguros.                                  |
+| **Sistema**                      | Procesos automáticos: tareas programadas, *webhooks* y notificaciones.                     |
+
+Un usuario puede tener más de un rol dentro de un taller (por ejemplo, Administrador y Cajero en un taller pequeño).
+
+---
+
+## 4. Requerimientos funcionales (RF)
+
+### Módulo 1 · Autenticación, usuarios y seguridad
+
+| ID        | Requerimiento                                                                                                                                       |
+| --------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **RF-01** | El sistema debe permitir iniciar y cerrar sesión con correo y contraseña, y cerrar la sesión automáticamente cuando expire.                          |
+| **RF-02** | El sistema debe permitir recuperar la contraseña por correo y cambiarla estando autenticado.                                                       |
+| **RF-03** | El sistema debe permitir crear, editar, activar y desactivar usuarios, y asignarles uno o varios roles.                                            |
+| **RF-04** | El sistema debe registrar en auditoría las acciones relevantes (quién, qué, cuándo y sobre qué registro) y permitir consultarlas con filtros.       |
+| **RF-05** | El sistema debe registrar la autorización de tratamiento de datos personales y atender solicitudes de consulta, actualización o supresión.        |
+
+### Módulo 2 · Talleres y configuración
+
+| ID        | Requerimiento                                                                                                     |
+| --------- | ----------------------------------------------------------------------------------------------------------------- |
+| **RF-06** | El sistema debe permitir registrar y actualizar los datos comerciales y fiscales del taller (NIT, razón social, logo). |
+| **RF-07** | El sistema debe permitir configurar impuestos, numeración de facturas y resolución de facturación del taller.     |
+| **RF-08** | El sistema debe permitir gestionar sucursales con sus horarios de atención.                                       |
+
+### Módulo 3 · Clientes, vehículos e historial digital
+
+| ID        | Requerimiento                                                                                                                      |
+| --------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| **RF-09** | El sistema debe permitir registrar, buscar y actualizar clientes, y vincularlos a uno o varios vehículos.                         |
+| **RF-10** | El sistema debe registrar vehículos por placa y VIN, con marca, modelo, año, motor, tipo de uso y kilometraje.                    |
+| **RF-11** | El sistema debe mostrar el historial digital del vehículo en orden cronológico: servicios, repuestos, evidencias y coberturas.    |
+| **RF-12** | El sistema debe permitir transferir la propiedad de un vehículo conservando su historial.                                         |
+| **RF-13** | El sistema debe impedir la eliminación del historial y guardar el valor anterior de cada corrección.                              |
+
+### Módulo 4 · Servicios, agenda y técnicos
+
+| ID        | Requerimiento                                                                                                   |
+| --------- | --------------------------------------------------------------------------------------------------------------- |
+| **RF-14** | El sistema debe permitir gestionar el catálogo de servicios con precio, duración estimada y estado.             |
+| **RF-15** | El sistema debe permitir crear, confirmar, reprogramar y cancelar citas según la disponibilidad de la sucursal. |
+| **RF-16** | El sistema debe permitir asignar técnicos a una orden de trabajo y registrar el tiempo de mano de obra.         |
+
+### Módulo 5 · Órdenes de trabajo
+
+| ID        | Requerimiento                                                                                                                                  |
+| --------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| **RF-17** | El sistema debe registrar la recepción del vehículo: kilometraje, nivel de combustible, daños visibles, objetos dejados y fotos de ingreso.    |
+| **RF-18** | El sistema debe crear órdenes de trabajo con código único y controlar su ciclo de vida según el flujo de estados definido (RN-10).            |
+| **RF-19** | El sistema debe permitir registrar síntomas, diagnóstico, observaciones y evidencias multimedia.                                              |
+| **RF-20** | El sistema debe generar presupuestos versionados con servicios, repuestos, mano de obra, impuestos y descuentos.                              |
+| **RF-21** | El sistema debe permitir que el cliente apruebe o rechace el presupuesto de forma remota.                                                     |
+| **RF-22** | El sistema debe registrar la entrega del vehículo con el kilometraje de salida y la conformidad del cliente.                                  |
+
+### Módulo 6 · Inventario, proveedores y compras
+
+| ID        | Requerimiento                                                                                                                       |
+| --------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| **RF-23** | El sistema debe gestionar repuestos con código, costo, precio de venta, stock disponible, reservado y mínimo.                       |
+| **RF-24** | El sistema debe reservar, consumir y devolver repuestos según el avance de la OT, y registrar ajustes con motivo.                   |
+| **RF-25** | El sistema debe gestionar proveedores y órdenes de compra, e incrementar el stock al registrar la recepción.                        |
+
+### Módulo 7 · Facturación y pagos
+
+| ID        | Requerimiento                                                                                                                       |
+| --------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| **RF-26** | El sistema debe convertir una OT finalizada en factura con el detalle de mano de obra, repuestos, impuestos y descuentos.           |
+| **RF-27** | El sistema debe enviar la factura electrónica a la DIAN mediante un proveedor tecnológico autorizado y guardar su CUFE.             |
+| **RF-28** | El sistema debe registrar pagos presenciales (efectivo, tarjeta, transferencia) y pagos parciales.                                  |
+| **RF-29** | El sistema debe generar enlaces de pago en línea y actualizar la factura al recibir la confirmación de la pasarela (*webhook*).    |
+| **RF-30** | El sistema debe emitir notas crédito y gestionar reembolsos sin eliminar la factura original.                                       |
+
+### Módulo 8 · Garantías, microseguros y reclamos
+
+| ID        | Requerimiento                                                                                                                            |
+| --------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| **RF-31** | El sistema debe permitir configurar productos de protección: tipo, aseguradora, cobertura, vigencia, precio, comisión y condiciones.     |
+| **RF-32** | El sistema debe evaluar la elegibilidad del vehículo y emitir la garantía o microseguro durante el cobro, con certificado digital.       |
+| **RF-33** | El sistema debe mostrar las coberturas con su estado y vigencia, y gestionar su vencimiento y cancelación.                              |
+| **RF-34** | El sistema debe permitir radicar reclamos con evidencias, hacer su seguimiento y registrar el dictamen del auditor.                     |
+| **RF-35** | El sistema debe calcular y liquidar las comisiones de la plataforma y del taller por cada producto vendido y transacción procesada.     |
+
+### Módulo 9 · Portal del cliente
+
+| ID        | Requerimiento                                                                                                                           |
+| --------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| **RF-36** | El sistema debe invitar al cliente al portal y permitirle activar su cuenta.                                                            |
+| **RF-37** | El portal debe permitir al cliente consultar sus vehículos, historial, OT, presupuestos, facturas, pagos, coberturas y reclamos.        |
+
+### Módulo 10 · Notificaciones
+
+| ID        | Requerimiento                                                                                                         |
+| --------- | --------------------------------------------------------------------------------------------------------------------- |
+| **RF-38** | El sistema debe enviar notificaciones automáticas por correo y WhatsApp ante eventos del servicio.                    |
+| **RF-39** | El sistema debe generar recordatorios de mantenimiento preventivo por tiempo o kilometraje estimado.                  |
+| **RF-40** | El sistema debe permitir al cliente elegir sus canales de notificación y retirar su autorización para mensajes.       |
+
+### Módulo 11 · Reportes y analítica
+
+| ID        | Requerimiento                                                                                                          |
+| --------- | ---------------------------------------------------------------------------------------------------------------------- |
+| **RF-41** | El sistema debe mostrar un tablero financiero: ingresos, cartera pendiente, reembolsos y comisiones por periodo.       |
+| **RF-42** | El sistema debe generar reportes operativos (OT, tiempos, servicios) y de inventario (movimientos, stock crítico).     |
+| **RF-43** | El sistema debe permitir exportar los reportes a CSV y PDF.                                                            |
+
+### Módulo 12 · Agentes de inteligencia artificial
+
+| ID        | Requerimiento                                                                                                                                  |
+| --------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| **RF-44** | El sistema debe ofrecer agentes de IA de apoyo para diagnóstico, mantenimiento preventivo, atención al cliente, inventario y preanálisis de reclamos. |
+| **RF-45** | El sistema debe registrar cada interacción relevante con los agentes de IA y si su recomendación fue aceptada o descartada.                   |
+
+### Módulo 13 · Administración de la plataforma
+
+| ID        | Requerimiento                                                                                                         |
+| --------- | --------------------------------------------------------------------------------------------------------------------- |
+| **RF-46** | El sistema debe permitir dar de alta, activar y suspender talleres, y crear su primer Administrador del Taller.       |
+| **RF-47** | El sistema debe permitir registrar aseguradoras aliadas y sus usuarios auditores.                                    |
+
+---
+
+## 5. Reglas de negocio (RN)
+
+| ID        | Regla                              | Descripción y restricciones                                                                                                                                                   |
+| --------- | ---------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **RN-01** | Elegibilidad de cobertura          | Por defecto, un producto de protección solo aplica a vehículos con menos de 120 000 km, menos de 10 años y uso particular (no servicio público ni flotas). Cada producto puede definir sus propios límites. |
+| **RN-02** | Inmutabilidad de documentos        | Una factura emitida o una OT facturada no puede editarse ni eliminarse. Los cambios se hacen con notas crédito auditables.                                                     |
+| **RN-03** | Comisión de plataforma             | PitShield retiene un porcentaje configurable por cada producto de protección emitido y por cada pago en línea procesado, antes de liquidar al taller.                       |
+| **RN-04** | Inspección obligatoria             | Para activar una cobertura, el técnico debe adjuntar al menos 2 fotos del repuesto nuevo instalado y registrar el kilometraje exacto.                                         |
+| **RN-05** | Validación de inventario           | Una OT no puede pasar a "En Proceso" si los repuestos requeridos no tienen stock disponible suficiente.                                                                     |
+| **RN-06** | Aislamiento por taller             | Todo registro operativo pertenece a un taller. Un usuario solo ve datos de su taller, salvo el Administrador de Plataforma y el Auditor en los reclamos asignados.           |
+| **RN-07** | Bloqueo por intentos fallidos      | Tras 5 intentos fallidos de inicio de sesión en 15 minutos, la cuenta se bloquea 15 minutos. El enlace de recuperación de contraseña vence en 30 minutos y es de un solo uso. |
+| **RN-08** | Identidad del vehículo             | La placa y el VIN son únicos dentro de un taller. El historial registrado por otro taller solo es visible si el propietario lo autoriza desde el portal.                     |
+| **RN-09** | Vigencia del presupuesto           | Un presupuesto vence a los 15 días (configurable). Cualquier trabajo adicional requiere una nueva versión aprobada por el cliente.                                           |
+| **RN-10** | Flujo de estados de la OT          | Borrador → Pendiente de Aprobación → Aprobada → En Proceso ⇄ En Espera → Finalizada → Lista para Entrega → Entregada. "Cancelada" solo es posible antes de "Finalizada".    |
+| **RN-11** | Origen de la factura               | Solo se factura una OT en estado "Finalizada" o posterior. Una OT genera una sola factura.                                                                                   |
+| **RN-12** | Pagos idempotentes                 | El identificador de transacción de la pasarela es único. Un mismo evento recibido dos veces no registra dos pagos.                                                           |
+| **RN-13** | Pagos parciales                    | Una factura queda "Pagada" cuando la suma de sus pagos iguala el total. El saldo nunca puede ser negativo ni superar el total.                                               |
+| **RN-14** | Condiciones del reclamo            | Solo se radica un reclamo con cobertura vigente, dentro de los 30 días siguientes a la falla y con al menos una evidencia de la falla.                                       |
+| **RN-15** | Decisión humana                    | Los agentes de IA solo recomiendan. Ningún estado final (diagnóstico, cobertura, reclamo, pago) cambia sin la acción de un usuario autorizado.                              |
+| **RN-16** | Límite de recordatorios            | Se envía como máximo un recordatorio por vehículo y condición cada 30 días, y nunca a un cliente que retiró su autorización.                                                |
+| **RN-17** | Stock no negativo                  | Ningún movimiento puede dejar el stock disponible de un repuesto por debajo de cero.                                                                                         |
+| **RN-18** | Moneda e impuestos                 | Los valores se manejan en pesos colombianos (COP). El IVA por defecto es 19 % y cada servicio o repuesto puede tener su propia tarifa (incluida exenta).                     |
+| **RN-19** | Datos personales                   | Los datos del cliente solo se tratan con su autorización expresa, según la Ley 1581 de 2012. Las solicitudes del titular se responden en máximo 15 días hábiles.          |
+| **RN-20** | Cancelación con consumo            | Si una OT tiene repuestos ya consumidos, su cancelación requiere facturar lo consumido o registrar una justificación aprobada por el Administrador del Taller.              |
+
+---
+
+## 6. Requerimientos no funcionales (RNF)
+
+| ID         | Categoría              | Criterio de aceptación / métrica                                                                                                                                         |
+| ---------- | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **RNF-01** | Seguridad              | Control de acceso por roles (RBAC) con JWT de corta duración y *refresh token*, contraseñas con BCrypt, HTTPS (TLS 1.2 o superior) y mitigación del OWASP Top 10.      |
+| **RNF-02** | Disponibilidad         | En producción, disponibilidad mínima del 99.5 % mensual.                                                                                                                 |
+| **RNF-03** | Multi-taller (SaaS)    | Aislamiento lógico estricto: el Taller A nunca puede ver ni consultar datos del Taller B. Se verifica con pruebas automáticas en cada *endpoint*.                         |
+| **RNF-04** | Rendimiento            | Con 50 usuarios concurrentes por taller, el percentil 95 de las consultas (historial, inventario, facturas) es menor a 1.5 s y la generación de una factura menor a 3 s. |
+| **RNF-05** | Cumplimiento fiscal    | Facturación electrónica según la normativa DIAN vigente, a través de un proveedor tecnológico autorizado.                                                               |
+| **RNF-06** | Privacidad             | Cumplimiento de la Ley 1581 de 2012 (habeas data). Datos sensibles cifrados en reposo y nunca escritos en los *logs*.                                                    |
+| **RNF-07** | Usabilidad             | Interfaz responsive (el portal del cliente se usa desde el celular) y accesible según WCAG 2.1 nivel AA.                                                                 |
+| **RNF-08** | Localización           | Interfaz en español (es-CO), moneda COP, zona horaria America/Bogota y fechas en formato dd/mm/aaaa.                                                                     |
+| **RNF-09** | Mantenibilidad         | Monolito modular con un módulo por dominio. Código en español, revisión de *pull request* obligatoria y análisis estático en CI.                                         |
+| **RNF-10** | Calidad y pruebas      | Cobertura mínima del 80 % en servicios y dominio. La integración continua bloquea el *merge* si falla una prueba. Los flujos críticos tienen pruebas E2E.                |
+| **RNF-11** | Observabilidad         | *Logs* estructurados con identificador de correlación, *health checks* y métricas expuestas.                                                                             |
+| **RNF-12** | Respaldo               | Copias de seguridad diarias de la base de datos con retención mínima de 7 días (pérdida máxima de datos: 24 horas).                                                      |
+| **RNF-13** | Archivos multimedia    | Fotos JPG/PNG de hasta 10 MB y videos MP4 de hasta 100 MB, guardados en almacenamiento de objetos y servidos con enlaces temporales.                                     |
+| **RNF-14** | API                    | API REST versionada (`/api/v1`) y documentada con OpenAPI.                                                                                                                |
+| **RNF-15** | Portabilidad           | Backend, frontend y base de datos se ejecutan en contenedores Docker. El entorno local se levanta con un solo comando.                                                    |
+
+---
+
+## 7. Restricciones y supuestos
+
+**Restricciones**
+
+- Backend en Java con Spring Boot, frontend en React con TypeScript y base de datos PostgreSQL.
+- El desarrollo (código, base de datos, *commits* e *issues*) se hace en español. La documentación se publica en español e inglés.
+- Equipo de 3 desarrolladores, con gestión en GitHub Projects.
+
+**Supuestos**
+
+- Las integraciones externas (pasarela de pago, facturación electrónica, aseguradora y WhatsApp) se desarrollan primero contra sus entornos de prueba (*sandbox*) o simuladores.
+- La aseguradora aliada define las coberturas reales. Los valores de este documento son configurables y de referencia.
+- El portal del cliente y el sistema del taller comparten el mismo frontend, con vistas según el rol.
+
+---
+
+## 8. Plan de entregas
+
+| Entrega        | Contenido                                                                                                               | Módulos         |
+| -------------- | ----------------------------------------------------------------------------------------------------------------------- | --------------- |
+| **MVP**        | Acceso y roles, talleres, clientes, vehículos e historial, agenda, órdenes de trabajo, inventario, facturación y pagos presenciales | 1 – 7, 13 (alta de talleres) |
+| **Entrega 2**  | Pagos en línea, factura electrónica, garantías y microseguros, reclamos, portal del cliente y notificaciones          | 7 – 10, 13      |
+| **Entrega 3**  | Reportes, exportaciones y agentes de inteligencia artificial                                                            | 11, 12          |
+
+La prioridad y la entrega de cada historia de usuario aparecen en [`HISTORIAS-USUARIO.md`](HISTORIAS-USUARIO.md).
+
+---
+
+## 9. Matriz de trazabilidad
+
+| Requerimiento | Historias de usuario      | Requerimiento | Historias de usuario      |
+| ------------- | ------------------------- | ------------- | ------------------------- |
+| RF-01         | HU-001, HU-049            | RF-25         | HU-024                    |
+| RF-02         | HU-002                    | RF-26         | HU-025                    |
+| RF-03         | HU-003                    | RF-27         | HU-057                    |
+| RF-04         | HU-004                    | RF-28         | HU-056                    |
+| RF-05         | HU-050                    | RF-29         | HU-026, HU-027            |
+| RF-06         | HU-005                    | RF-30         | HU-028                    |
+| RF-07         | HU-051                    | RF-31         | HU-065                    |
+| RF-08         | HU-006                    | RF-32         | HU-029, HU-030            |
+| RF-09         | HU-007, HU-052            | RF-33         | HU-031, HU-058            |
+| RF-10         | HU-008                    | RF-34         | HU-032, HU-033            |
+| RF-11         | HU-009                    | RF-35         | HU-059                    |
+| RF-12         | HU-010                    | RF-36         | HU-060                    |
+| RF-13         | HU-011                    | RF-37         | HU-034 – HU-037           |
+| RF-14         | HU-012                    | RF-38         | HU-038                    |
+| RF-15         | HU-013                    | RF-39         | HU-039                    |
+| RF-16         | HU-014, HU-053            | RF-40         | HU-061                    |
+| RF-17         | HU-054                    | RF-41         | HU-040                    |
+| RF-18         | HU-015, HU-019, HU-020    | RF-42         | HU-041, HU-042            |
+| RF-19         | HU-016                    | RF-43         | HU-062                    |
+| RF-20         | HU-017                    | RF-44         | HU-043 – HU-047           |
+| RF-21         | HU-018                    | RF-45         | HU-048                    |
+| RF-22         | HU-055                    | RF-46         | HU-063                    |
+| RF-23         | HU-021                    | RF-47         | HU-064                    |
+| RF-24         | HU-022, HU-023            |               |                           |
+
+---
+
+## 10. Glosario
+
+| Término                  | Significado                                                                                                       |
+| ------------------------ | ----------------------------------------------------------------------------------------------------------------- |
+| **OT**                   | Orden de trabajo: el registro de todo lo que se le hace a un vehículo en una visita al taller.                    |
+| **VIN**                  | Número de identificación del vehículo, único en el mundo (17 caracteres).                                         |
+| **Taller (*tenant*)**    | Cada empresa cliente de PitShield. Sus datos están aislados de los demás talleres.                               |
+| **Garantía extendida**   | Compromiso de reparar una pieza o trabajo si falla dentro de un plazo, más allá de la garantía legal.            |
+| **Microseguro**          | Póliza de bajo costo respaldada por una aseguradora, que cubre fallas mecánicas definidas.                       |
+| **Cobertura**            | Una garantía o microseguro emitido para un vehículo, con su vigencia y condiciones.                              |
+| **Reclamo**              | Solicitud para que la cobertura pague una falla.                                                                  |
+| **Nota crédito**         | Documento que anula o reduce una factura sin borrarla.                                                            |
+| **CUFE**                 | Código único que la DIAN asigna a cada factura electrónica.                                                       |
+| ***Webhook***            | Aviso automático que un servicio externo (por ejemplo, la pasarela de pago) envía a PitShield cuando algo ocurre. |
+| **Idempotencia**         | Propiedad de una operación que, repetida, produce el mismo resultado (evita pagos duplicados).                   |
+| **RBAC**                 | Control de acceso basado en roles.                                                                                |

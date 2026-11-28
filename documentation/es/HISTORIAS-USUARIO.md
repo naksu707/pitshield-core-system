@@ -1,6 +1,17 @@
 # Historias de Usuario - PitShield Core System
 
+> 🇪🇸 Español · [🇬🇧 English](../en/USER-STORY.md)
+
 > **Documento de Backlog para Producción:** Especificación de Historias de Usuario (HU) con Criterios de Aceptación en formato BDD (Behavior-Driven Development / Gherkin) para el desarrollo de la plataforma PitShield Core System.
+
+| Campo                 | Valor                                                                                  |
+| --------------------- | -------------------------------------------------------------------------------------- |
+| **Total de HU**       | 65 historias en 13 módulos                                                             |
+| **Requerimientos**    | [`REQUERIMIENTOS.md`](REQUERIMIENTOS.md) (RF, RN y RNF citados en cada historia)       |
+| **Prioridad**         | Alta (imprescindible para su entrega) · Media (importante) · Baja (deseable)           |
+| **Entregas**          | MVP · Entrega 2 · Entrega 3 (ver el plan de entregas en los requerimientos)            |
+
+> Los roles (Administrador de Plataforma, Administrador del Taller, Asesor de Servicio, Técnico, Cajero, Encargado de Inventario, Cliente, Auditor de Aseguradora y Sistema) se describen en la sección 3 de los requerimientos. Las historias de cada módulo no siempre van en orden numérico: las nuevas se agregaron con el siguiente número disponible para no cambiar los identificadores existentes.
 
 ---
 
@@ -18,6 +29,9 @@
 10. [Módulo 10: Notificaciones Automáticas](#10-módulo-10-notificaciones-automáticas)
 11. [Módulo 11: Reportes y Analítica](#11-módulo-11-reportes-y-analítica)
 12. [Módulo 12: Agentes de Inteligencia Artificial](#12-módulo-12-agentes-de-inteligencia-artificial)
+13. [Módulo 13: Administración de la Plataforma](#13-módulo-13-administración-de-la-plataforma)
+14. [Reglas transversales de aceptación](#reglas-transversales-de-aceptación)
+15. [Definición de terminado](#definición-de-terminado)
 
 ---
 
@@ -27,6 +41,7 @@
 * **Como:** Usuario del Sistema
 * **Quiero:** Iniciar sesión con mis credenciales
 * **Para:** Acceder únicamente a las funciones permitidas según mi rol.
+* **Prioridad:** Alta · **Entrega:** MVP · **Requerimientos:** RF-01, RN-06, RN-07
 
 ```gherkin
 Escenario: Inicio de sesión exitoso
@@ -52,6 +67,7 @@ Escenario: Usuario inactivo
 * **Como:** Usuario del Sistema
 * **Quiero:** Recuperar o cambiar mi contraseña
 * **Para:** Mantener el acceso a mi cuenta de forma segura.
+* **Prioridad:** Alta · **Entrega:** MVP · **Requerimientos:** RF-02, RN-07
 
 ```gherkin
 Escenario: Recuperación de contraseña
@@ -71,6 +87,7 @@ Escenario: Cambio de contraseña autenticado
 * **Como:** Administrador del Taller
 * **Quiero:** Crear, editar, activar, desactivar usuarios y asignar roles
 * **Para:** Controlar quién puede utilizar las funciones del sistema.
+* **Prioridad:** Alta · **Entrega:** MVP · **Requerimientos:** RF-03
 
 ```gherkin
 Escenario: Creación de usuario
@@ -90,6 +107,7 @@ Escenario: Desactivación de usuario
 * **Como:** Administrador del Taller
 * **Quiero:** Consultar las acciones relevantes realizadas en el sistema
 * **Para:** Mantener trazabilidad y detectar cambios no autorizados.
+* **Prioridad:** Media · **Entrega:** MVP · **Requerimientos:** RF-04
 
 ```gherkin
 Escenario: Registro de una acción auditable
@@ -104,6 +122,57 @@ Escenario: Consulta de auditoría
   ENTONCES el sistema permite filtrar por usuario, fecha, módulo y tipo de acción.
 ```
 
+### HU-049: Cierre de Sesión y Expiración de la Sesión
+* **Como:** Usuario del Sistema
+* **Quiero:** Cerrar mi sesión y que se cierre sola cuando quede inactiva
+* **Para:** Evitar que otra persona use mi cuenta en un equipo compartido.
+* **Prioridad:** Alta · **Entrega:** MVP · **Requerimientos:** RF-01
+
+```gherkin
+Escenario: Cierre de sesión
+  DADO QUE el usuario tiene una sesión activa
+  CUANDO presione "Cerrar Sesión"
+  ENTONCES el sistema invalida su sesión
+  Y lo redirige a la pantalla de inicio de sesión.
+
+Escenario: Sesión expirada
+  DADO QUE la sesión del usuario expiró por inactividad
+  CUANDO intente realizar una operación
+  ENTONCES el sistema rechaza la operación
+  Y solicita iniciar sesión nuevamente sin perder la pantalla en la que estaba.
+
+Escenario: Bloqueo por intentos fallidos
+  DADO QUE el usuario ingresó una contraseña incorrecta 5 veces en 15 minutos
+  CUANDO intente iniciar sesión de nuevo
+  ENTONCES el sistema bloquea la cuenta durante 15 minutos
+  Y registra el bloqueo en auditoría.
+```
+
+### HU-050: Autorización y Derechos sobre Datos Personales
+* **Como:** Cliente
+* **Quiero:** Autorizar el tratamiento de mis datos y poder consultarlos, actualizarlos o pedir su eliminación
+* **Para:** Mantener el control de mi información personal (Ley 1581 de 2012).
+* **Prioridad:** Alta · **Entrega:** MVP · **Requerimientos:** RF-05, RN-19
+
+```gherkin
+Escenario: Registro de la autorización
+  DADO QUE el asesor registra un cliente nuevo
+  CUANDO el cliente acepte la política de tratamiento de datos
+  ENTONCES el sistema guarda la fecha, el canal y la versión de la política aceptada.
+
+Escenario: Cliente sin autorización
+  DADO QUE el cliente no ha aceptado la política de tratamiento de datos
+  CUANDO el asesor intente enviarle comunicaciones
+  ENTONCES el sistema bloquea el envío
+  Y muestra que falta la autorización.
+
+Escenario: Solicitud de eliminación
+  DADO QUE el cliente solicita eliminar sus datos personales
+  CUANDO el administrador apruebe la solicitud
+  ENTONCES el sistema anonimiza los datos personales del cliente
+  Y conserva los documentos fiscales que la ley obliga a guardar.
+```
+
 ---
 
 # 2. Módulo 2: Talleres y Configuración
@@ -112,6 +181,7 @@ Escenario: Consulta de auditoría
 * **Como:** Administrador del Taller
 * **Quiero:** Registrar y actualizar los datos comerciales y fiscales del taller
 * **Para:** Utilizarlos en facturas, comprobantes y comunicaciones.
+* **Prioridad:** Alta · **Entrega:** MVP · **Requerimientos:** RF-06
 
 ```gherkin
 Escenario: Actualización exitosa
@@ -125,6 +195,7 @@ Escenario: Actualización exitosa
 * **Como:** Administrador del Taller
 * **Quiero:** Configurar sucursales, horarios y disponibilidad
 * **Para:** Organizar la operación y agenda del taller.
+* **Prioridad:** Media · **Entrega:** MVP · **Requerimientos:** RF-08
 
 ```gherkin
 Escenario: Creación de sucursal
@@ -139,6 +210,31 @@ Escenario: Actualización de horario
   ENTONCES el sistema actualiza la disponibilidad para futuras citas.
 ```
 
+### HU-051: Configuración de Impuestos y Numeración de Facturas
+* **Como:** Administrador del Taller
+* **Quiero:** Configurar las tarifas de impuestos, la resolución de facturación y su numeración
+* **Para:** Emitir facturas válidas con los consecutivos autorizados.
+* **Prioridad:** Alta · **Entrega:** MVP · **Requerimientos:** RF-07, RN-18
+
+```gherkin
+Escenario: Registro de la resolución de facturación
+  DADO QUE el administrador se encuentra en Configuración
+  CUANDO registre el número de resolución, el prefijo, el rango autorizado y la vigencia
+  ENTONCES el sistema guarda la resolución
+  Y la usa para numerar las siguientes facturas.
+
+Escenario: Rango de numeración agotado
+  DADO QUE se emitió la última factura del rango autorizado
+  CUANDO el cajero intente emitir otra factura
+  ENTONCES el sistema bloquea la emisión
+  Y avisa al administrador que debe registrar una nueva resolución.
+
+Escenario: Tarifa de impuesto por concepto
+  DADO QUE un servicio o repuesto tiene una tarifa de IVA configurada
+  CUANDO se incluya en un presupuesto o factura
+  ENTONCES el sistema calcula el impuesto con esa tarifa.
+```
+
 ---
 
 # 3. Módulo 3: Clientes, Vehículos e Historial Digital
@@ -147,6 +243,7 @@ Escenario: Actualización de horario
 * **Como:** Asesor de Servicio
 * **Quiero:** Registrar un cliente y vincularlo a uno o varios vehículos
 * **Para:** Mantener la información del propietario y facilitar las comunicaciones.
+* **Prioridad:** Alta · **Entrega:** MVP · **Requerimientos:** RF-09
 
 ```gherkin
 Escenario: Registro y vinculación exitosa
@@ -166,6 +263,7 @@ Escenario: Cliente existente
 * **Como:** Asesor de Servicio
 * **Quiero:** Registrar un vehículo ingresando placa, VIN, marca, modelo, año y kilometraje
 * **Para:** Crear su hoja de vida digital.
+* **Prioridad:** Alta · **Entrega:** MVP · **Requerimientos:** RF-10, RN-08
 
 ```gherkin
 Escenario: Registro exitoso
@@ -186,6 +284,7 @@ Escenario: Placa o VIN duplicado
 * **Como:** Técnico del Taller
 * **Quiero:** Buscar un vehículo por placa o VIN
 * **Para:** Consultar intervenciones, repuestos, evidencias y garantías asociadas.
+* **Prioridad:** Alta · **Entrega:** MVP · **Requerimientos:** RF-11, RN-08
 
 ```gherkin
 Escenario: Consulta exitosa
@@ -205,6 +304,7 @@ Escenario: Vehículo no encontrado
 * **Como:** Administrador / Asesor de Servicio
 * **Quiero:** Cambiar el propietario asociado a un vehículo
 * **Para:** Mantener la continuidad del historial sin eliminar información anterior.
+* **Prioridad:** Media · **Entrega:** MVP · **Requerimientos:** RF-12
 
 ```gherkin
 Escenario: Transferencia exitosa
@@ -223,6 +323,7 @@ Escenario: Trazabilidad de transferencia
 * **Como:** Administrador del Taller
 * **Quiero:** Garantizar la trazabilidad de los eventos críticos del historial vehicular
 * **Para:** Evitar la eliminación o modificación no controlada de información histórica.
+* **Prioridad:** Alta · **Entrega:** MVP · **Requerimientos:** RF-13
 
 ```gherkin
 Escenario: Intento de eliminar registro histórico
@@ -238,6 +339,32 @@ Escenario: Corrección de información
   Y registra el nuevo valor, usuario, fecha y motivo.
 ```
 
+### HU-052: Búsqueda y Actualización de Clientes
+* **Como:** Asesor de Servicio
+* **Quiero:** Buscar clientes por documento, nombre, teléfono o placa y actualizar sus datos
+* **Para:** Atenderlos rápido y mantener su información de contacto al día.
+* **Prioridad:** Alta · **Entrega:** MVP · **Requerimientos:** RF-09
+
+```gherkin
+Escenario: Búsqueda de cliente
+  DADO QUE existen clientes registrados en el taller
+  CUANDO el asesor escriba al menos 3 caracteres del documento, nombre, teléfono o placa
+  ENTONCES el sistema muestra los clientes que coinciden
+  Y sus vehículos vinculados.
+
+Escenario: Actualización de datos de contacto
+  DADO QUE el cliente cambió su teléfono o correo
+  CUANDO el asesor actualice los datos y guarde
+  ENTONCES el sistema guarda los nuevos datos
+  Y registra el valor anterior en auditoría.
+
+Escenario: Documento duplicado
+  DADO QUE ya existe un cliente con el mismo tipo y número de documento
+  CUANDO el asesor intente asignar ese documento a otro cliente
+  ENTONCES el sistema bloquea el cambio
+  Y muestra el cliente existente.
+```
+
 ---
 
 # 4. Módulo 4: Servicios, Agenda y Técnicos
@@ -246,6 +373,7 @@ Escenario: Corrección de información
 * **Como:** Administrador del Taller
 * **Quiero:** Crear, editar, activar o desactivar servicios
 * **Para:** Mantener actualizado el catálogo que puede ofrecer el taller.
+* **Prioridad:** Alta · **Entrega:** MVP · **Requerimientos:** RF-14
 
 ```gherkin
 Escenario: Crear servicio
@@ -265,6 +393,7 @@ Escenario: Desactivar servicio
 * **Como:** Cliente / Asesor de Servicio
 * **Quiero:** Crear, consultar, confirmar, reprogramar y cancelar citas
 * **Para:** Organizar la atención del taller.
+* **Prioridad:** Media · **Entrega:** MVP · **Requerimientos:** RF-15
 
 ```gherkin
 Escenario: Creación de cita
@@ -290,6 +419,7 @@ Escenario: Reprogramación
 * **Como:** Asesor de Servicio / Administrador
 * **Quiero:** Asignar uno o varios técnicos a una OT
 * **Para:** Definir responsables de la ejecución del servicio.
+* **Prioridad:** Alta · **Entrega:** MVP · **Requerimientos:** RF-16
 
 ```gherkin
 Escenario: Asignación exitosa
@@ -305,6 +435,31 @@ Escenario: Técnico no disponible
   Y solicita seleccionar otro técnico o periodo.
 ```
 
+### HU-053: Registro de Tiempos de Mano de Obra
+* **Como:** Técnico del Taller
+* **Quiero:** Iniciar, pausar y terminar el registro de tiempo en las tareas de una OT
+* **Para:** Que el taller conozca el tiempo real de cada trabajo y lo facture correctamente.
+* **Prioridad:** Media · **Entrega:** MVP · **Requerimientos:** RF-16
+
+```gherkin
+Escenario: Registro de tiempo
+  DADO QUE el técnico está asignado a una OT en estado "En Proceso"
+  CUANDO inicie y luego termine una tarea
+  ENTONCES el sistema registra la duración
+  Y la suma a la mano de obra de la OT.
+
+Escenario: Tarea sin asignación
+  DADO QUE el técnico no está asignado a la OT
+  CUANDO intente registrar tiempo en ella
+  ENTONCES el sistema bloquea el registro.
+
+Escenario: Tiempo mayor al estimado
+  DADO QUE el tiempo registrado supera la duración estimada del servicio
+  CUANDO el técnico termine la tarea
+  ENTONCES el sistema alerta al asesor
+  Y solicita una observación del técnico.
+```
+
 ---
 
 # 5. Módulo 5: Órdenes de Trabajo
@@ -313,6 +468,7 @@ Escenario: Técnico no disponible
 * **Como:** Asesor de Servicio
 * **Quiero:** Crear una Orden de Trabajo asociada a un cliente, vehículo y servicios solicitados
 * **Para:** Iniciar formalmente la atención del vehículo.
+* **Prioridad:** Alta · **Entrega:** MVP · **Requerimientos:** RF-18
 
 ```gherkin
 Escenario: Creación de OT
@@ -327,6 +483,7 @@ Escenario: Creación de OT
 * **Como:** Técnico del Taller
 * **Quiero:** Registrar síntomas, diagnóstico, observaciones y evidencias
 * **Para:** Documentar técnicamente el estado del vehículo.
+* **Prioridad:** Alta · **Entrega:** MVP · **Requerimientos:** RF-19
 
 ```gherkin
 Escenario: Registro de diagnóstico
@@ -346,6 +503,7 @@ Escenario: Evidencia obligatoria
 * **Como:** Asesor de Servicio
 * **Quiero:** Generar un presupuesto con servicios, repuestos, mano de obra, impuestos y descuentos
 * **Para:** Presentar al cliente el costo estimado antes de ejecutar trabajos adicionales.
+* **Prioridad:** Alta · **Entrega:** MVP · **Requerimientos:** RF-20, RN-09, RN-18
 
 ```gherkin
 Escenario: Presupuesto generado
@@ -365,6 +523,7 @@ Escenario: Modificación del presupuesto
 * **Como:** Propietario del Vehículo
 * **Quiero:** Revisar y aprobar o rechazar el presupuesto desde mi teléfono
 * **Para:** Autorizar los trabajos sin desplazarme al taller.
+* **Prioridad:** Media · **Entrega:** Entrega 2 · **Requerimientos:** RF-21, RN-09
 
 ```gherkin
 Escenario: Aprobación
@@ -384,6 +543,7 @@ Escenario: Rechazo
 * **Como:** Administrador / Asesor de Servicio
 * **Quiero:** Controlar los estados de una OT
 * **Para:** Garantizar que las operaciones ocurran en el orden correcto.
+* **Prioridad:** Alta · **Entrega:** MVP · **Requerimientos:** RF-18, RN-05, RN-10
 
 ```gherkin
 Escenario: Avance de estado válido
@@ -399,12 +559,13 @@ Escenario: Cambio de estado no permitido
   Y muestra las condiciones pendientes.
 ```
 
-> **Estados recomendados:** Borrador → Pendiente de Aprobación → Aprobada → En Proceso → En Espera → Finalizada → Lista para Entrega → Completada / Cancelada.
+> **Flujo de estados (RN-10):** Borrador → Pendiente de Aprobación → Aprobada → En Proceso ⇄ En Espera → Finalizada → Lista para Entrega → Entregada. "Cancelada" solo es posible antes de "Finalizada".
 
 ### HU-020: Cancelación y Modificación Controlada de OT
 * **Como:** Asesor de Servicio / Administrador
 * **Quiero:** Cancelar o modificar una OT según su estado
 * **Para:** Reflejar cambios solicitados por el cliente o imprevistos operativos.
+* **Prioridad:** Media · **Entrega:** MVP · **Requerimientos:** RF-18, RN-10, RN-20
 
 ```gherkin
 Escenario: Cancelación de OT
@@ -420,6 +581,58 @@ Escenario: Modificación no permitida
   Y registra el intento si corresponde.
 ```
 
+### HU-054: Recepción del Vehículo
+* **Como:** Asesor de Servicio
+* **Quiero:** Registrar el estado del vehículo al momento de recibirlo
+* **Para:** Dejar constancia de cómo llegó y evitar disputas con el cliente.
+* **Prioridad:** Alta · **Entrega:** MVP · **Requerimientos:** RF-17
+
+```gherkin
+Escenario: Recepción registrada
+  DADO QUE el vehículo llega al taller
+  CUANDO el asesor registre kilometraje, nivel de combustible, daños visibles, objetos dejados y fotos de ingreso
+  ENTONCES el sistema guarda la recepción
+  Y la asocia a la OT y al historial del vehículo.
+
+Escenario: Kilometraje menor al último registrado
+  DADO QUE el historial tiene un kilometraje mayor al ingresado
+  CUANDO el asesor guarde la recepción
+  ENTONCES el sistema muestra una alerta
+  Y exige una observación que justifique la diferencia.
+
+Escenario: Constancia para el cliente
+  DADO QUE la recepción fue registrada
+  CUANDO el asesor la confirme
+  ENTONCES el sistema genera una constancia de recepción
+  Y la envía al cliente por el canal configurado.
+```
+
+### HU-055: Entrega del Vehículo al Cliente
+* **Como:** Asesor de Servicio
+* **Quiero:** Registrar la entrega del vehículo con la conformidad del cliente
+* **Para:** Cerrar la atención y dejar constancia del estado de salida.
+* **Prioridad:** Alta · **Entrega:** MVP · **Requerimientos:** RF-22
+
+```gherkin
+Escenario: Entrega exitosa
+  DADO QUE la OT está en "Lista para Entrega"
+  CUANDO el asesor registre el kilometraje de salida y la conformidad del cliente
+  ENTONCES el sistema cambia la OT a "Entregada"
+  Y agrega la entrega al historial del vehículo.
+
+Escenario: Entrega con saldo pendiente
+  DADO QUE la factura de la OT tiene saldo pendiente
+  CUANDO el asesor intente registrar la entrega
+  ENTONCES el sistema advierte el saldo pendiente
+  Y solo permite continuar con autorización del Administrador del Taller.
+
+Escenario: Inconformidad del cliente
+  DADO QUE el cliente no está conforme con el trabajo
+  CUANDO el asesor registre la inconformidad y su motivo
+  ENTONCES el sistema la guarda en la OT
+  Y notifica al Administrador del Taller.
+```
+
 ---
 
 # 6. Módulo 6: Inventario, Proveedores y Compras
@@ -428,6 +641,7 @@ Escenario: Modificación no permitida
 * **Como:** Encargado de Inventario
 * **Quiero:** Consultar y administrar existencias de repuestos
 * **Para:** Mantener control del inventario disponible.
+* **Prioridad:** Alta · **Entrega:** MVP · **Requerimientos:** RF-23, RN-17
 
 ```gherkin
 Escenario: Consulta de stock
@@ -445,6 +659,7 @@ Escenario: Stock mínimo
 * **Como:** Sistema / Encargado de Inventario
 * **Quiero:** Reservar y descontar repuestos según el avance de una OT
 * **Para:** Evitar descuadres entre stock disponible y piezas realmente utilizadas.
+* **Prioridad:** Alta · **Entrega:** MVP · **Requerimientos:** RF-24, RN-05, RN-17
 
 ```gherkin
 Escenario: Reserva de stock
@@ -464,6 +679,7 @@ Escenario: Consumo
 * **Como:** Encargado de Inventario
 * **Quiero:** Registrar devoluciones y ajustes por avería, merma o corrección
 * **Para:** Mantener el inventario físico y digital sincronizado.
+* **Prioridad:** Media · **Entrega:** MVP · **Requerimientos:** RF-24, RN-17
 
 ```gherkin
 Escenario: Devolución de repuesto no utilizado
@@ -483,6 +699,7 @@ Escenario: Ajuste por merma
 * **Como:** Encargado de Inventario
 * **Quiero:** Registrar proveedores y órdenes de compra
 * **Para:** Controlar el abastecimiento de repuestos.
+* **Prioridad:** Media · **Entrega:** MVP · **Requerimientos:** RF-25
 
 ```gherkin
 Escenario: Registro de proveedor
@@ -505,6 +722,7 @@ Escenario: Recepción de compra
 * **Como:** Administrador / Cajero
 * **Quiero:** Generar una factura a partir de una OT finalizada
 * **Para:** Formalizar el cobro del servicio.
+* **Prioridad:** Alta · **Entrega:** MVP · **Requerimientos:** RF-26, RN-02, RN-11
 
 ```gherkin
 Escenario: Generación de factura
@@ -518,6 +736,7 @@ Escenario: Generación de factura
 * **Como:** Administrador / Cajero
 * **Quiero:** Enviar un enlace de pago al cliente
 * **Para:** Facilitar el pago remoto.
+* **Prioridad:** Media · **Entrega:** Entrega 2 · **Requerimientos:** RF-29
 
 ```gherkin
 Escenario: Envío de link
@@ -537,6 +756,7 @@ Escenario: Pago rechazado
 * **Como:** Sistema
 * **Quiero:** Actualizar el estado de una factura al recibir la confirmación de la pasarela
 * **Para:** Mantener sincronizados pagos y facturación.
+* **Prioridad:** Media · **Entrega:** Entrega 2 · **Requerimientos:** RF-29, RN-12, RN-13
 
 ```gherkin
 Escenario: Pago exitoso
@@ -556,6 +776,7 @@ Escenario: Webhook duplicado
 * **Como:** Administrador / Cajero
 * **Quiero:** Anular o ajustar facturas y gestionar reembolsos
 * **Para:** Mantener la trazabilidad contable sin eliminar documentos.
+* **Prioridad:** Media · **Entrega:** MVP · **Requerimientos:** RF-30, RN-02
 
 ```gherkin
 Escenario: Nota crédito
@@ -571,6 +792,58 @@ Escenario: Reembolso
   Y actualiza el estado según la respuesta de la pasarela.
 ```
 
+### HU-056: Pago Presencial y Pagos Parciales
+* **Como:** Cajero
+* **Quiero:** Registrar pagos en efectivo, tarjeta o transferencia, completos o parciales
+* **Para:** Llevar el control exacto de lo que paga cada cliente.
+* **Prioridad:** Alta · **Entrega:** MVP · **Requerimientos:** RF-28, RN-13
+
+```gherkin
+Escenario: Pago completo
+  DADO QUE existe una factura pendiente por $500.000
+  CUANDO el cajero registre un pago en efectivo por $500.000
+  ENTONCES el sistema marca la factura como "Pagada"
+  Y genera el comprobante de pago.
+
+Escenario: Pago parcial
+  DADO QUE existe una factura pendiente por $500.000
+  CUANDO el cajero registre un abono por $200.000
+  ENTONCES el sistema deja la factura en "Pago Parcial"
+  Y muestra un saldo pendiente de $300.000.
+
+Escenario: Pago mayor al saldo
+  DADO QUE la factura tiene un saldo de $300.000
+  CUANDO el cajero intente registrar un pago por $350.000
+  ENTONCES el sistema bloquea el registro
+  Y muestra el saldo máximo permitido.
+```
+
+### HU-057: Emisión de Factura Electrónica
+* **Como:** Sistema
+* **Quiero:** Enviar cada factura al proveedor tecnológico de facturación electrónica
+* **Para:** Que la factura sea válida ante la DIAN.
+* **Prioridad:** Media · **Entrega:** Entrega 2 · **Requerimientos:** RF-27, RNF-05
+
+```gherkin
+Escenario: Factura validada
+  DADO QUE el cajero emitió una factura
+  CUANDO el proveedor tecnológico la valide ante la DIAN
+  ENTONCES el sistema guarda el CUFE y el estado "Validada"
+  Y envía al cliente el PDF y el XML de la factura.
+
+Escenario: Factura rechazada
+  DADO QUE el proveedor rechaza la factura por un error en los datos
+  CUANDO el sistema reciba la respuesta
+  ENTONCES marca la factura como "Rechazada por la DIAN"
+  Y muestra al cajero el motivo para corregirlo.
+
+Escenario: Proveedor no disponible
+  DADO QUE el proveedor tecnológico no responde
+  CUANDO el sistema intente enviar la factura
+  ENTONCES reintenta el envío automáticamente
+  Y alerta al administrador si no logra enviarla en 24 horas.
+```
+
 ---
 
 # 8. Módulo 8: Garantías, Microseguros y Reclamos
@@ -581,6 +854,7 @@ Escenario: Reembolso
 * **Como:** Asesor de Servicio
 * **Quiero:** Consultar si un vehículo y servicio cumplen las condiciones de cobertura
 * **Para:** Ofrecer únicamente productos para los que el cliente sea elegible.
+* **Prioridad:** Alta · **Entrega:** Entrega 2 · **Requerimientos:** RF-32, RN-01
 
 ```gherkin
 Escenario: Vehículo elegible
@@ -600,6 +874,7 @@ Escenario: Vehículo no elegible
 * **Como:** Asesor de Servicio
 * **Quiero:** Emitir el producto de protección seleccionado por el cliente
 * **Para:** Activar su cobertura y generar el certificado correspondiente.
+* **Prioridad:** Alta · **Entrega:** Entrega 2 · **Requerimientos:** RF-32, RN-03, RN-04
 
 ```gherkin
 Escenario: Emisión exitosa
@@ -619,6 +894,7 @@ Escenario: Emisión fallida
 * **Como:** Cliente / Asesor
 * **Quiero:** Consultar las coberturas activas y su vigencia
 * **Para:** Conocer qué servicios o componentes están protegidos.
+* **Prioridad:** Media · **Entrega:** Entrega 2 · **Requerimientos:** RF-33
 
 ```gherkin
 Escenario: Consulta de cobertura
@@ -631,6 +907,7 @@ Escenario: Consulta de cobertura
 * **Como:** Administrador del Taller
 * **Quiero:** Radicar un reclamo con evidencias y consultar su estado
 * **Para:** Gestionar la solicitud de cobertura hasta su resolución.
+* **Prioridad:** Alta · **Entrega:** Entrega 2 · **Requerimientos:** RF-34, RN-14
 
 ```gherkin
 Escenario: Radicación
@@ -655,6 +932,7 @@ Escenario: Seguimiento
 * **Como:** Auditor de la Aseguradora
 * **Quiero:** Revisar evidencias y aprobar, rechazar o solicitar información
 * **Para:** Determinar si el reclamo cumple las condiciones de cobertura.
+* **Prioridad:** Alta · **Entrega:** Entrega 2 · **Requerimientos:** RF-34, RN-15
 
 ```gherkin
 Escenario: Aprobación
@@ -676,6 +954,52 @@ Escenario: Solicitud de información
   Y registra exactamente qué información falta.
 ```
 
+### HU-058: Vencimiento y Cancelación de Coberturas
+* **Como:** Sistema / Administrador del Taller
+* **Quiero:** Vencer las coberturas al terminar su vigencia y cancelar las que corresponda
+* **Para:** Que solo las coberturas vigentes permitan radicar reclamos.
+* **Prioridad:** Media · **Entrega:** Entrega 2 · **Requerimientos:** RF-33
+
+```gherkin
+Escenario: Vencimiento automático
+  DADO QUE una cobertura llegó a su fecha final
+  CUANDO se ejecute la rutina diaria
+  ENTONCES el sistema cambia la cobertura a "Vencida"
+  Y la muestra así en el historial del vehículo.
+
+Escenario: Aviso de vencimiento próximo
+  DADO QUE a una cobertura le faltan 30 días para vencer
+  CUANDO se ejecute la rutina diaria
+  ENTONCES el sistema notifica al cliente
+  Y le ofrece renovarla si el producto lo permite.
+
+Escenario: Cancelación
+  DADO QUE el cliente solicita cancelar una cobertura vigente
+  CUANDO el administrador registre la cancelación con su motivo
+  ENTONCES el sistema cambia la cobertura a "Cancelada"
+  Y calcula la devolución según las condiciones del producto.
+```
+
+### HU-059: Liquidación de Comisiones
+* **Como:** Administrador de Plataforma / Administrador del Taller
+* **Quiero:** Consultar y liquidar las comisiones por productos de protección y pagos en línea
+* **Para:** Saber cuánto le corresponde a PitShield y cuánto al taller en cada periodo.
+* **Prioridad:** Media · **Entrega:** Entrega 2 · **Requerimientos:** RF-35, RN-03
+
+```gherkin
+Escenario: Cálculo de comisión
+  DADO QUE se emitió una cobertura por $200.000 con comisión de plataforma del 10 %
+  CUANDO el sistema registre la emisión
+  ENTONCES calcula $20.000 para la plataforma
+  Y deja el valor restante según las condiciones del producto.
+
+Escenario: Liquidación mensual
+  DADO QUE terminó el periodo de liquidación
+  CUANDO el Administrador de Plataforma genere la liquidación de un taller
+  ENTONCES el sistema muestra el detalle por cobertura y transacción
+  Y marca esas comisiones como liquidadas para no volver a incluirlas.
+```
+
 ---
 
 # 9. Módulo 9: Portal del Cliente
@@ -684,6 +1008,7 @@ Escenario: Solicitud de información
 * **Como:** Cliente
 * **Quiero:** Consultar mis vehículos y su historial autorizado
 * **Para:** Conocer los servicios realizados y el estado de mis vehículos.
+* **Prioridad:** Media · **Entrega:** Entrega 2 · **Requerimientos:** RF-37, RN-08
 
 ```gherkin
 Escenario: Consulta del historial
@@ -697,6 +1022,7 @@ Escenario: Consulta del historial
 * **Como:** Cliente
 * **Quiero:** Consultar el estado de mi OT
 * **Para:** Conocer el avance del servicio.
+* **Prioridad:** Media · **Entrega:** Entrega 2 · **Requerimientos:** RF-37
 
 ```gherkin
 Escenario: Consulta de estado
@@ -710,6 +1036,7 @@ Escenario: Consulta de estado
 * **Como:** Cliente
 * **Quiero:** Consultar mis facturas y estados de pago
 * **Para:** Mantener control de mis obligaciones y transacciones.
+* **Prioridad:** Media · **Entrega:** Entrega 2 · **Requerimientos:** RF-37
 
 ```gherkin
 Escenario: Consulta de factura
@@ -727,6 +1054,7 @@ Escenario: Factura pendiente
 * **Como:** Cliente
 * **Quiero:** Consultar mis garantías y reclamos
 * **Para:** Conocer las coberturas y el avance de solicitudes.
+* **Prioridad:** Media · **Entrega:** Entrega 2 · **Requerimientos:** RF-37
 
 ```gherkin
 Escenario: Consulta de garantía
@@ -740,6 +1068,32 @@ Escenario: Consulta de reclamo
   ENTONCES puede consultar su estado y las actualizaciones permitidas.
 ```
 
+### HU-060: Invitación y Activación del Portal del Cliente
+* **Como:** Cliente
+* **Quiero:** Recibir una invitación para activar mi cuenta en el portal
+* **Para:** Consultar mis vehículos y servicios sin llamar al taller.
+* **Prioridad:** Media · **Entrega:** Entrega 2 · **Requerimientos:** RF-36
+
+```gherkin
+Escenario: Activación exitosa
+  DADO QUE el asesor registró al cliente con un correo válido
+  CUANDO el cliente abra el enlace de invitación y cree su contraseña
+  ENTONCES el sistema activa su cuenta
+  Y le muestra únicamente sus vehículos.
+
+Escenario: Invitación vencida
+  DADO QUE el enlace de invitación tiene más de 7 días
+  CUANDO el cliente intente usarlo
+  ENTONCES el sistema informa que venció
+  Y le permite solicitar uno nuevo.
+
+Escenario: Cliente de varios talleres
+  DADO QUE el cliente ya tiene cuenta por otro taller
+  CUANDO un nuevo taller lo invite
+  ENTONCES el sistema vincula el nuevo taller a su misma cuenta
+  Y no crea una cuenta duplicada.
+```
+
 ---
 
 # 10. Módulo 10: Notificaciones Automáticas
@@ -748,6 +1102,7 @@ Escenario: Consulta de reclamo
 * **Como:** Sistema
 * **Quiero:** Enviar notificaciones automáticas sobre eventos importantes
 * **Para:** Mantener informados al cliente y al personal.
+* **Prioridad:** Media · **Entrega:** Entrega 2 · **Requerimientos:** RF-38, RN-16
 
 ```gherkin
 Escenario: Notificación de aprobación
@@ -765,6 +1120,7 @@ Escenario: Vehículo listo para entrega
 * **Como:** Sistema (Job Programado)
 * **Quiero:** Detectar vehículos próximos a mantenimiento por tiempo o kilometraje
 * **Para:** Incentivar el mantenimiento preventivo.
+* **Prioridad:** Baja · **Entrega:** Entrega 2 · **Requerimientos:** RF-39, RN-16
 
 ```gherkin
 Escenario: Mantenimiento próximo
@@ -779,6 +1135,26 @@ Escenario: Evitar notificaciones duplicadas
   ENTONCES el sistema evita enviar notificaciones duplicadas dentro del periodo configurado.
 ```
 
+### HU-061: Preferencias y Autorización de Notificaciones
+* **Como:** Cliente
+* **Quiero:** Elegir por qué canales recibo mensajes y dejar de recibirlos si lo deseo
+* **Para:** Recibir solo la información que me interesa.
+* **Prioridad:** Media · **Entrega:** Entrega 2 · **Requerimientos:** RF-40, RN-16, RN-19
+
+```gherkin
+Escenario: Cambio de canal
+  DADO QUE el cliente tiene activos correo y WhatsApp
+  CUANDO desactive WhatsApp en su portal
+  ENTONCES el sistema deja de enviarle mensajes por WhatsApp
+  Y sigue usando el correo.
+
+Escenario: Retiro de autorización para recordatorios
+  DADO QUE el cliente retiró su autorización para mensajes comerciales y recordatorios
+  CUANDO se ejecute la rutina de recordatorios
+  ENTONCES el sistema no le envía recordatorios
+  Y solo le envía mensajes necesarios del servicio en curso.
+```
+
 ---
 
 # 11. Módulo 11: Reportes y Analítica
@@ -787,6 +1163,7 @@ Escenario: Evitar notificaciones duplicadas
 * **Como:** Dueño / Gerente del Taller
 * **Quiero:** Consultar indicadores financieros
 * **Para:** Evaluar ingresos, cobros, pagos pendientes y rentabilidad.
+* **Prioridad:** Media · **Entrega:** Entrega 3 · **Requerimientos:** RF-41
 
 ```gherkin
 Escenario: Consulta mensual
@@ -799,6 +1176,7 @@ Escenario: Consulta mensual
 * **Como:** Dueño / Gerente del Taller
 * **Quiero:** Consultar indicadores de operación
 * **Para:** Evaluar el desempeño del taller.
+* **Prioridad:** Media · **Entrega:** Entrega 3 · **Requerimientos:** RF-42
 
 ```gherkin
 Escenario: Consulta operativa
@@ -811,12 +1189,36 @@ Escenario: Consulta operativa
 * **Como:** Encargado de Inventario / Gerente
 * **Quiero:** Consultar movimientos y niveles de inventario
 * **Para:** Tomar decisiones de abastecimiento.
+* **Prioridad:** Baja · **Entrega:** Entrega 3 · **Requerimientos:** RF-42
 
 ```gherkin
 Escenario: Reporte de inventario
   DADO QUE existen movimientos registrados
   CUANDO el usuario consulte un periodo
   ENTONCES el sistema muestra entradas, consumos, devoluciones, ajustes y productos con stock crítico.
+```
+
+### HU-062: Exportación de Reportes
+* **Como:** Dueño / Gerente del Taller
+* **Quiero:** Exportar los reportes a CSV y PDF
+* **Para:** Compartirlos con mi contador o analizarlos en otras herramientas.
+* **Prioridad:** Baja · **Entrega:** Entrega 3 · **Requerimientos:** RF-43
+
+```gherkin
+Escenario: Exportación a CSV
+  DADO QUE el gerente consulta un reporte con filtros
+  CUANDO presione "Exportar CSV"
+  ENTONCES el sistema descarga un archivo con los mismos datos y filtros del reporte.
+
+Escenario: Exportación a PDF
+  DADO QUE el gerente consulta un reporte
+  CUANDO presione "Exportar PDF"
+  ENTONCES el sistema genera un PDF con el logo del taller, el periodo y la fecha de generación.
+
+Escenario: Reporte sin datos
+  DADO QUE el periodo seleccionado no tiene registros
+  CUANDO el gerente intente exportar
+  ENTONCES el sistema informa que no hay datos para exportar.
 ```
 
 ---
@@ -829,6 +1231,7 @@ Escenario: Reporte de inventario
 * **Como:** Técnico del Taller
 * **Quiero:** Consultar un agente IA utilizando síntomas, historial y datos del vehículo
 * **Para:** Obtener recomendaciones que apoyen el diagnóstico técnico.
+* **Prioridad:** Baja · **Entrega:** Entrega 3 · **Requerimientos:** RF-44, RN-15
 
 ```gherkin
 Escenario: Recomendación de diagnóstico
@@ -848,6 +1251,7 @@ Escenario: Información insuficiente
 * **Como:** Sistema / Gerente del Taller
 * **Quiero:** Analizar el historial y comportamiento del vehículo
 * **Para:** Generar recomendaciones de mantenimiento preventivo.
+* **Prioridad:** Baja · **Entrega:** Entrega 3 · **Requerimientos:** RF-44, RN-15
 
 ```gherkin
 Escenario: Recomendación preventiva
@@ -861,6 +1265,7 @@ Escenario: Recomendación preventiva
 * **Como:** Cliente
 * **Quiero:** Consultar información del servicio mediante un asistente IA
 * **Para:** Obtener respuestas rápidas sobre mis vehículos, OT, citas y garantías.
+* **Prioridad:** Baja · **Entrega:** Entrega 3 · **Requerimientos:** RF-44, RN-15
 
 ```gherkin
 Escenario: Consulta autorizada
@@ -879,6 +1284,7 @@ Escenario: Información no disponible
 * **Como:** Encargado de Inventario
 * **Quiero:** Obtener recomendaciones basadas en consumo y existencias
 * **Para:** Anticipar necesidades de abastecimiento.
+* **Prioridad:** Baja · **Entrega:** Entrega 3 · **Requerimientos:** RF-44, RN-15
 
 ```gherkin
 Escenario: Recomendación de reposición
@@ -892,6 +1298,7 @@ Escenario: Recomendación de reposición
 * **Como:** Auditor de la Aseguradora
 * **Quiero:** Recibir un preanálisis automático de las evidencias de un reclamo
 * **Para:** Priorizar y agilizar la revisión humana.
+* **Prioridad:** Baja · **Entrega:** Entrega 3 · **Requerimientos:** RF-44, RN-15
 
 ```gherkin
 Escenario: Preanálisis exitoso
@@ -911,6 +1318,7 @@ Escenario: Decisión humana obligatoria
 * **Como:** Administrador
 * **Quiero:** Registrar las interacciones y recomendaciones relevantes de los agentes IA
 * **Para:** Mantener trazabilidad y supervisión sobre su uso.
+* **Prioridad:** Media · **Entrega:** Entrega 3 · **Requerimientos:** RF-45, RN-15
 
 ```gherkin
 Escenario: Registro de interacción
@@ -918,6 +1326,75 @@ Escenario: Registro de interacción
   CUANDO el agente genere una recomendación
   ENTONCES el sistema registra usuario, fecha, agente, contexto permitido y resultado de la interacción
   Y permite identificar si la recomendación fue aceptada o descartada.
+```
+
+---
+
+# 13. Módulo 13: Administración de la Plataforma
+
+### HU-063: Alta y Gestión de Talleres
+* **Como:** Administrador de Plataforma
+* **Quiero:** Registrar, activar y suspender talleres, y crear su primer administrador
+* **Para:** Incorporar nuevos talleres a PitShield y controlar su acceso.
+* **Prioridad:** Alta · **Entrega:** MVP · **Requerimientos:** RF-46, RN-06
+
+```gherkin
+Escenario: Alta de un taller
+  DADO QUE el taller no está registrado
+  CUANDO el Administrador de Plataforma registre su NIT, razón social y el correo del administrador
+  ENTONCES el sistema crea el taller con sus datos aislados de los demás talleres
+  Y envía una invitación al Administrador del Taller.
+
+Escenario: NIT duplicado
+  DADO QUE ya existe un taller con el mismo NIT
+  CUANDO el Administrador de Plataforma intente registrarlo de nuevo
+  ENTONCES el sistema bloquea el registro
+  Y muestra el taller existente.
+
+Escenario: Suspensión de un taller
+  DADO QUE un taller está activo
+  CUANDO el Administrador de Plataforma lo suspenda indicando el motivo
+  ENTONCES los usuarios del taller no pueden operar
+  Y el sistema conserva todos sus datos.
+```
+
+### HU-064: Gestión de Aseguradoras y Auditores
+* **Como:** Administrador de Plataforma
+* **Quiero:** Registrar las aseguradoras aliadas y sus usuarios auditores
+* **Para:** Que cada reclamo llegue a la aseguradora que respalda la cobertura.
+* **Prioridad:** Media · **Entrega:** Entrega 2 · **Requerimientos:** RF-47
+
+```gherkin
+Escenario: Registro de aseguradora
+  DADO QUE la aseguradora no está registrada
+  CUANDO el Administrador de Plataforma registre sus datos y su contacto
+  ENTONCES el sistema crea la aseguradora
+  Y permite asociarle productos de protección.
+
+Escenario: Alcance del auditor
+  DADO QUE un auditor pertenece a la Aseguradora A
+  CUANDO consulte los reclamos
+  ENTONCES el sistema muestra únicamente los reclamos de coberturas de la Aseguradora A.
+```
+
+### HU-065: Configuración de Productos de Protección
+* **Como:** Administrador de Plataforma
+* **Quiero:** Crear y configurar garantías extendidas y microseguros
+* **Para:** Definir qué cubre cada producto, cuánto cuesta y quién puede comprarlo.
+* **Prioridad:** Alta · **Entrega:** Entrega 2 · **Requerimientos:** RF-31, RN-01, RN-03
+
+```gherkin
+Escenario: Creación de producto
+  DADO QUE existe una aseguradora registrada
+  CUANDO el Administrador de Plataforma registre tipo, cobertura, vigencia, precio, comisión y condiciones de elegibilidad
+  ENTONCES el sistema crea el producto en estado "Borrador"
+  Y solo lo ofrece a los talleres cuando se publique.
+
+Escenario: Cambio de condiciones
+  DADO QUE un producto publicado tiene coberturas emitidas
+  CUANDO el Administrador de Plataforma cambie su precio o condiciones
+  ENTONCES el sistema crea una nueva versión del producto
+  Y las coberturas ya emitidas conservan las condiciones con las que se vendieron.
 ```
 
 ---
@@ -937,3 +1414,18 @@ Estas reglas aplican a todas las HU cuando correspondan:
 - Los errores de integraciones externas deben registrarse y permitir seguimiento.
 - Las notificaciones deben evitar envíos duplicados.
 - Las funcionalidades de facturación, pagos, seguros y comunicaciones deben implementarse conforme a las reglas regulatorias y proveedores que se definan para el mercado objetivo.
+- Toda operación debe respetar el aislamiento por taller (RN-06): ningún usuario puede ver ni modificar datos de otro taller.
+
+---
+
+## Definición de terminado
+
+Una historia de usuario se considera terminada cuando:
+
+1. Cumple todos sus escenarios de aceptación.
+2. Tiene pruebas unitarias y de integración, con la cobertura mínima del 80 % en servicios y dominio (RNF-10).
+3. Sus escenarios principales están automatizados (API o E2E) y los demás fueron probados manualmente con evidencia.
+4. Pasó la revisión de código de al menos otro integrante del equipo.
+5. La integración continua está en verde.
+6. La documentación de la API (OpenAPI) está actualizada.
+7. Fue demostrada y aceptada en la revisión del sprint.
