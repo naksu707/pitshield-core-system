@@ -6,7 +6,7 @@
 
 | Field             | Value                                                                                |
 | ----------------- | ------------------------------------------------------------------------------------ |
-| **Total stories** | 65 stories in 13 modules                                                             |
+| **Total stories** | 75 stories in 13 modules                                                             |
 | **Requirements**  | [`REQUIREMENTS.md`](REQUIREMENTS.md) (the RF, RN and RNF cited in each story)        |
 | **Priority**      | High (essential for its release) · Medium (important) · Low (nice to have)           |
 | **Releases**      | MVP · Release 2 · Release 3 (see the release plan in the requirements)               |
@@ -27,8 +27,8 @@
 8. [Module 8: Warranties, Microinsurance and Claims](#8-module-8-warranties-microinsurance-and-claims)
 9. [Module 9: Customer Portal](#9-module-9-customer-portal)
 10. [Module 10: Automated Notifications](#10-module-10-automated-notifications)
-11. [Module 11: Reports and Analytics](#11-module-11-reports-and-analytics)
-12. [Module 12: Artificial Intelligence Agents](#12-module-12-artificial-intelligence-agents)
+11. [Module 11: Reports, Statistics and Analytics](#11-module-11-reports-statistics-and-analytics)
+12. [Module 12: Artificial Intelligence and Chatbots](#12-module-12-artificial-intelligence-and-chatbots)
 13. [Module 13: Platform Administration](#13-module-13-platform-administration)
 14. [Cross-cutting acceptance rules](#cross-cutting-acceptance-rules)
 15. [Definition of done](#definition-of-done)
@@ -1157,7 +1157,7 @@ Scenario: Consent withdrawn for reminders
 
 ---
 
-# 11. Module 11: Reports and Analytics
+# 11. Module 11: Reports, Statistics and Analytics
 
 ### HU-040: Financial Dashboard
 * **As a:** Workshop Owner / Manager
@@ -1221,11 +1221,109 @@ Scenario: Report without data
   THEN the system says there is no data to export.
 ```
 
+### HU-066: Workshop Key Indicators Dashboard
+* **As a:** Workshop Owner / Manager
+* **I want to:** See the workshop's key indicators and their trend
+* **So that:** I know at a glance how the business is doing and where to improve.
+* **Priority:** Medium · **Release:** Release 3 · **Requirements:** RF-48
+
+```gherkin
+Scenario: Indicators view
+  GIVEN work orders, invoices and coverage are recorded
+  WHEN the manager opens the dashboard and selects a period
+  THEN the system shows the average ticket, quote approval rate, returning customer rate, average service time and the percentage of services sold with coverage
+  AND compares each indicator with the previous period.
+
+Scenario: Indicator detail
+  GIVEN the manager sees an indicator on the dashboard
+  WHEN they click it
+  THEN the system shows its chart by day, week or month
+  AND the records behind it.
+
+Scenario: Period without data
+  GIVEN the selected period has no records
+  WHEN the manager views the dashboard
+  THEN the system says there is no data for that period
+  AND does not show zero values that could be mistaken for real results.
+```
+
+### HU-067: Service and Technician Statistics
+* **As a:** Workshop Owner / Manager
+* **I want to:** See which services sell the most and how each technician performs
+* **So that:** I can plan staff, inventory and promotions.
+* **Priority:** Medium · **Release:** Release 3 · **Requirements:** RF-48
+
+```gherkin
+Scenario: Most requested services
+  GIVEN invoiced services exist
+  WHEN the manager selects a period
+  THEN the system shows the ranking of services by quantity and revenue
+  AND their percentage of the total.
+
+Scenario: Productivity per technician
+  GIVEN technicians recorded labor time
+  WHEN the manager selects a period
+  THEN the system shows, per technician, the hours recorded, the work orders finished and the real time against the estimate.
+
+Scenario: Demand by day and hour
+  GIVEN appointments and work orders are recorded
+  WHEN the manager views demand
+  THEN the system shows a heat map by day of the week and time slot.
+```
+
+### HU-068: Platform Analytics
+* **As a:** Platform Administrator
+* **I want to:** See usage and business statistics for the whole platform
+* **So that:** I can make product decisions and measure growth.
+* **Priority:** Medium · **Release:** Release 3 · **Requirements:** RF-49, RN-23
+
+```gherkin
+Scenario: Platform indicators
+  GIVEN active workshops exist
+  WHEN the Platform Administrator opens the analytics
+  THEN the system shows active workshops, work orders per month, commission revenue, coverage issued and chatbot usage.
+
+Scenario: Anonymous comparison between workshops
+  GIVEN a comparison group has at least 5 workshops
+  WHEN the administrator compares indicators between workshops
+  THEN the system shows averages and percentiles
+  AND does not reveal the name or data of any workshop.
+
+Scenario: Group too small
+  GIVEN a comparison group has fewer than 5 workshops
+  WHEN the administrator tries to compare it
+  THEN the system does not show the comparison
+  AND explains the group is too small to protect confidentiality.
+```
+
+### HU-069: Coverage and Loss Ratio Analytics
+* **As a:** Insurer Auditor
+* **I want to:** See statistics on my insurer's coverage and claims
+* **So that:** I can assess the risk and adjust the products.
+* **Priority:** Medium · **Release:** Release 3 · **Requirements:** RF-50, RN-23
+
+```gherkin
+Scenario: Coverage indicators
+  GIVEN coverage was issued with the insurer
+  WHEN the auditor selects a period
+  THEN the system shows active coverage, premiums issued, claims by status, amount paid and the loss ratio (amount paid over premiums).
+
+Scenario: Most frequent failures
+  GIVEN approved claims exist
+  WHEN the auditor views the causes
+  THEN the system shows the most frequent failures by component, make and model.
+
+Scenario: Information scope
+  GIVEN the auditor belongs to Insurer A
+  WHEN they view the analytics
+  THEN the system only shows coverage and claims of Insurer A.
+```
+
 ---
 
-# 12. Module 12: Artificial Intelligence Agents
+# 12. Module 12: Artificial Intelligence and Chatbots
 
-> AI agents must work as **support assistants**. Technical, financial, coverage and claim decisions with real impact must stay under the control of authorized users.
+> The module includes **chatbots** for customers (web portal and WhatsApp) and for workshop staff, and **support agents** for diagnosis, maintenance, inventory and claims. AI agents must work as **support assistants**. Technical, financial, coverage and claim decisions with real impact must stay under the control of authorized users.
 
 ### HU-043: AI-Assisted Diagnosis Agent
 * **As a:** Technician
@@ -1261,11 +1359,11 @@ Scenario: Preventive recommendation
   AND relates them to the mileage, time or available history.
 ```
 
-### HU-045: AI Customer Service Agent
+### HU-045: AI Customer Service Chatbot
 * **As a:** Customer
 * **I want to:** Ask an AI assistant about my service
 * **So that:** I get quick answers about my vehicles, work orders, appointments and warranties.
-* **Priority:** Low · **Release:** Release 3 · **Requirements:** RF-44, RN-15
+* **Priority:** Medium · **Release:** Release 3 · **Requirements:** RF-51, RN-15, RN-21
 
 ```gherkin
 Scenario: Authorized question
@@ -1326,6 +1424,148 @@ Scenario: Interaction logged
   WHEN the agent generates a recommendation
   THEN the system records the user, date, agent, allowed context and result of the interaction
   AND shows whether the recommendation was accepted or dismissed.
+```
+
+### HU-070: Booking Appointments through the Chatbot
+* **As a:** Customer
+* **I want to:** Book, reschedule or cancel an appointment by chatting with the chatbot
+* **So that:** I can do it at any time without calling the workshop.
+* **Priority:** Medium · **Release:** Release 3 · **Requirements:** RF-51, RN-21
+
+```gherkin
+Scenario: Appointment booked
+  GIVEN the customer is logged in and has a registered vehicle
+  WHEN they ask the chatbot for an appointment for a service
+  THEN the chatbot shows the available time slots
+  AND creates the appointment only after the customer confirms the chosen slot.
+
+Scenario: No availability
+  GIVEN there are no time slots on the requested date
+  WHEN the customer asks for it
+  THEN the chatbot offers the closest available dates.
+
+Scenario: Rescheduling
+  GIVEN the customer has an active appointment
+  WHEN they ask the chatbot to change it
+  THEN the chatbot shows new time slots
+  AND updates the appointment after the customer confirms.
+```
+
+### HU-071: WhatsApp Chatbot
+* **As a:** Customer
+* **I want to:** Talk to the workshop's chatbot on WhatsApp
+* **So that:** I can check my service from the app I already use.
+* **Priority:** Medium · **Release:** Release 3 · **Requirements:** RF-51, RN-19, RN-21
+
+```gherkin
+Scenario: Customer identified
+  GIVEN the WhatsApp number matches a customer who allowed this channel
+  WHEN they write to the workshop's number
+  THEN the chatbot greets them by name
+  AND answers about their vehicles, appointments and work orders.
+
+Scenario: Unregistered number
+  GIVEN the number does not belong to any customer of the workshop
+  WHEN the person writes
+  THEN the chatbot only answers general questions about the workshop
+  AND shows no customer information.
+
+Scenario: Verification before sensitive data
+  GIVEN the customer asks about an invoice or coverage
+  WHEN the chatbot is about to answer
+  THEN it sends a verification code
+  AND only shows the information after the code is confirmed.
+```
+
+### HU-072: Chatbot Hand-off to an Advisor
+* **As a:** Customer
+* **I want to:** Have the chatbot pass me to a person when I need it
+* **So that:** I can solve what the chatbot cannot.
+* **Priority:** High · **Release:** Release 3 · **Requirements:** RF-53, RN-22
+
+```gherkin
+Scenario: The customer asks for an advisor
+  GIVEN the customer is chatting with the chatbot
+  WHEN they ask to talk to a person
+  THEN the chatbot transfers the conversation to an available advisor
+  AND the advisor sees the whole conversation history.
+
+Scenario: The chatbot does not understand
+  GIVEN the chatbot did not understand the question twice in a row
+  WHEN the customer writes again without success
+  THEN the chatbot offers to pass them to an advisor.
+
+Scenario: Outside opening hours
+  GIVEN no advisors are on duty
+  WHEN the customer asks to talk to a person
+  THEN the chatbot records the request
+  AND tells them when they will be served.
+```
+
+### HU-073: Conversational Assistant for Staff
+* **As a:** Workshop Staff
+* **I want to:** Ask questions about the workshop's data in natural language
+* **So that:** I get information without searching several screens.
+* **Priority:** Low · **Release:** Release 3 · **Requirements:** RF-52, RN-06, RN-21
+
+```gherkin
+Scenario: Question answered
+  GIVEN the advisor is logged in
+  WHEN they ask "Which vehicles are ready for pickup today?"
+  THEN the assistant answers with the list
+  AND shows links to each work order.
+
+Scenario: Question beyond their permissions
+  GIVEN a technician has no access to financial information
+  WHEN they ask the assistant about this month's revenue
+  THEN the assistant says they do not have permission for that information.
+
+Scenario: Source of the answer
+  GIVEN the assistant answers with figures
+  WHEN the user reads the answer
+  THEN the assistant shows which report or query the data comes from.
+```
+
+### HU-074: Chatbot Knowledge Base
+* **As a:** Workshop Administrator
+* **I want to:** Configure the FAQs, opening hours, policies and reference prices the chatbot uses
+* **So that:** It answers with my workshop's correct information.
+* **Priority:** Medium · **Release:** Release 3 · **Requirements:** RF-53
+
+```gherkin
+Scenario: New FAQ
+  GIVEN the administrator is in the chatbot settings
+  WHEN they add a question and its answer
+  THEN the chatbot uses that information in its next answers.
+
+Scenario: Updated information
+  GIVEN the administrator changed the opening hours
+  WHEN a customer asks about the opening hours
+  THEN the chatbot answers with the new hours.
+
+Scenario: Question not in the knowledge base
+  GIVEN the knowledge base does not have the answer
+  WHEN a customer asks
+  THEN the chatbot says it does not have that information and offers an advisor
+  AND records the question so the administrator can add it.
+```
+
+### HU-075: Conversation Ratings and Analytics
+* **As a:** Workshop Administrator
+* **I want to:** See how the chatbot is doing with customers
+* **So that:** I can improve its answers and the service.
+* **Priority:** Low · **Release:** Release 3 · **Requirements:** RF-45, RF-53
+
+```gherkin
+Scenario: Customer rating
+  GIVEN a chatbot conversation ended
+  WHEN the customer rates it from 1 to 5
+  THEN the system stores the rating with the conversation.
+
+Scenario: Chatbot analytics
+  GIVEN conversations are recorded
+  WHEN the administrator selects a period
+  THEN the system shows the number of conversations, most asked topics, percentage solved without an advisor, appointments booked by the chatbot and average rating.
 ```
 
 ---
@@ -1410,6 +1650,7 @@ These rules apply to every story when relevant:
 - Relevant operations must create audit records.
 - Customer and vehicle information must only be visible to authorized users.
 - Media evidence must stay linked to its vehicle, work order or claim.
+- Chatbots and AI agents only use information the user can access and never make up data they cannot verify (RN-21).
 - AI agents must present their results as assistance, not as a replacement for human decisions with technical, financial, contractual or coverage impact.
 - Errors from external integrations must be logged and traceable.
 - Notifications must avoid duplicate sends.

@@ -14,10 +14,12 @@
 ![Docker](https://img.shields.io/badge/Docker-2496ED?style=flat-square&logo=docker&logoColor=white)
 ![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-2088FF?style=flat-square&logo=githubactions&logoColor=white)
 
+[![Backend](https://github.com/naksu707/pitshield-core-system/actions/workflows/backend.yml/badge.svg)](https://github.com/naksu707/pitshield-core-system/actions/workflows/backend.yml)
+
 </div>
 
 > [!NOTE]
-> **Status: design phase 🚧** · Requirements, user stories and the tech stack are defined. Architecture and database design come next, followed by the MVP.
+> **Status: in development 🚧** · Requirements, user stories and the tech stack are defined, and the backend base is ready: login with JWT and roles, workshop isolation and vehicle registration. The MVP comes next.
 
 ---
 
@@ -30,6 +32,7 @@
 | Customers doubt that billed parts were installed or that prices are fair | A **digital vehicle history** that cannot be altered, with mileage, installed parts and photo or video evidence |
 | Paper, spreadsheets and generic point-of-sale systems leak money        | **Work orders, inventory, electronic invoicing and payments** in one place                                      |
 | When a repair fails, the shop pays for the rework or loses the customer | **Extended warranties and microinsurance** sold at checkout, backed by an insurer, with digital claims          |
+| Customers call to ask the same things and the owner decides by intuition | **AI chatbots** that answer and book 24/7, and **statistics** that show how the business is really doing     |
 
 ### Modules
 
@@ -45,9 +48,34 @@
 | 8  | Warranties, microinsurance and claims     | Eligibility, issuance, coverage, claims, commissions                        |
 | 9  | Customer portal                           | Vehicles, work orders, quotes, invoices and coverage from the phone         |
 | 10 | Automated notifications                   | Service events and maintenance reminders by email and WhatsApp              |
-| 11 | Reports and analytics                     | Financial, operational and inventory reports, CSV and PDF export            |
-| 12 | AI agents                                 | Support for diagnosis, maintenance, customer service, inventory and claims  |
+| 11 | Reports, statistics and analytics         | KPI dashboards, service and technician statistics, platform and insurer analytics, exports |
+| 12 | AI and chatbots                           | Customer chatbot (portal and WhatsApp), staff assistant, AI support agents   |
 | 13 | Platform administration                   | Workshop onboarding, insurers, protection products                          |
+
+---
+
+## 🤖 AI and chatbots
+
+| Chatbot or agent              | Who uses it              | What it does                                                                                  |
+| ----------------------------- | ------------------------ | --------------------------------------------------------------------------------------------- |
+| **Customer chatbot**          | Customers, on the portal and on WhatsApp | Answers about their vehicles, work orders, invoices and coverage; books, reschedules and cancels appointments; hands off to an advisor when needed |
+| **Staff assistant**           | Workshop staff           | Answers questions like *"Which vehicles are ready for pickup today?"*, within each role's permissions |
+| **Support agents**            | Technicians, managers, auditors | Suggest possible diagnoses, preventive maintenance, restocking and a pre-analysis of claims |
+
+The chatbots answer from the workshop's real data and from a knowledge base each workshop configures (FAQs, hours, policies). They never make up prices or statuses, they ask for confirmation before booking, and every final decision (diagnosis, payment, claim) stays with a person. Personal data is masked before it reaches the AI provider.
+
+---
+
+## 📊 Statistics and analytics
+
+| Dashboard                  | For                       | Main indicators                                                                                         |
+| -------------------------- | ------------------------- | ------------------------------------------------------------------------------------------------------- |
+| **Workshop KPIs**          | Owner or manager          | Average ticket, quote approval rate, returning customers, average service time, coverage attach rate   |
+| **Services and technicians** | Owner or manager        | Best-selling services, productivity per technician, real vs. estimated time, demand by day and hour    |
+| **Finance and inventory**  | Owner, manager, inventory | Revenue, outstanding balances, commissions, stock movements and critical stock                          |
+| **Chatbot**                | Workshop Administrator    | Conversations, most asked topics, share solved without an advisor, appointments booked, ratings        |
+| **Platform**               | PitShield                 | Active workshops, work orders per month, commission revenue, anonymous benchmarks between workshops    |
+| **Insurer**                | Insurer auditors          | Active coverage, premiums, claims by status, loss ratio, most frequent failures                         |
 
 ---
 
@@ -56,9 +84,9 @@
 | Document                    | 🇪🇸 Español                                                                    | 🇬🇧 English                                                       |
 | --------------------------- | ------------------------------------------------------------------------------ | ----------------------------------------------------------------- |
 | Requirements specification  | [`REQUERIMIENTOS.md`](documentation/es/REQUERIMIENTOS.md)                      | [`REQUIREMENTS.md`](documentation/en/REQUIREMENTS.md)             |
-| User stories (65, in Gherkin) | [`HISTORIAS-USUARIO.md`](documentation/es/HISTORIAS-USUARIO.md)              | [`USER-STORY.md`](documentation/en/USER-STORY.md)                 |
+| User stories (75, in Gherkin) | [`HISTORIAS-USUARIO.md`](documentation/es/HISTORIAS-USUARIO.md)              | [`USER-STORY.md`](documentation/en/USER-STORY.md)                 |
 
-The requirements include 47 functional requirements, 20 business rules, 15 non-functional requirements, the release plan and a traceability matrix that links every requirement to its user stories.
+The requirements include 53 functional requirements, 23 business rules, 18 non-functional requirements, the release plan and a traceability matrix that links every requirement to its user stories.
 
 ---
 
@@ -75,6 +103,8 @@ The requirements include 47 functional requirements, 20 business rules, 15 non-f
 | Local environment      | Docker Compose: database, storage and email inbox for testing                                                       |
 | CI/CD                  | GitHub Actions                                                                                                      |
 | Project management     | GitHub Projects and Issues                                                                                          |
+| Artificial intelligence | Spring AI with a language model provider (chosen in Release 3), and pgvector in PostgreSQL to search the chatbot's knowledge base |
+| Analytics and charts   | Reporting views in PostgreSQL, charts in React (Recharts)                                                          |
 | Integrations (sandbox) | Payment gateway, electronic invoicing provider, partner insurer and WhatsApp, first against their test environments |
 
 **Database environments**
@@ -168,16 +198,59 @@ Development is done **in Spanish**; the documentation is published in Spanish an
 
 ---
 
+## ▶️ Run the backend
+
+**Requirements:** Java 21, Maven and Docker Desktop (running).
+
+```bash
+# 1. Start PostgreSQL
+docker compose up -d
+
+# 2. Start the API (http://localhost:8080)
+cd backend
+mvn spring-boot:run
+
+# 3. Run every test (Docker must be running: integration tests start their own PostgreSQL)
+mvn verify
+```
+
+| What                 | Where                                                                                       |
+| -------------------- | ------------------------------------------------------------------------------------------- |
+| API documentation    | http://localhost:8080/swagger-ui.html                                                       |
+| Health check         | http://localhost:8080/actuator/health                                                       |
+| Coverage report      | `backend/target/site/jacoco/index.html` (after `mvn verify`)                                 |
+| Demo users (`dev`)   | `admin@pitshield.dev`, `asesor@pitshield.dev`, `tecnico@pitshield.dev`, `plataforma@pitshield.dev` · password `PitShield2026*` |
+
+**Try it**
+
+```bash
+# Log in and keep the token
+TOKEN=$(curl -s -X POST http://localhost:8080/api/v1/autenticacion/inicio-sesion \
+  -H "Content-Type: application/json" \
+  -d '{"correo":"asesor@pitshield.dev","contrasena":"PitShield2026*"}' | jq -r .token)
+
+# Register a vehicle
+curl -s -X POST http://localhost:8080/api/v1/vehiculos \
+  -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" \
+  -d '{"placa":"ABC123","marca":"Mazda","modelo":"3 Touring","anio":2020,"tipoUso":"PARTICULAR","kilometraje":45000}'
+```
+
+**Configuration** (environment variables, with local defaults): `PITSHIELD_DB_URL`, `PITSHIELD_DB_USUARIO`, `PITSHIELD_DB_CONTRASENA`, `PITSHIELD_JWT_SECRETO` (required outside local development) and `PITSHIELD_CORS_ORIGENES`.
+
+---
+
 ## 🗺️ Roadmap
 
 - [x] Repository initialization and scope definition
 - [x] Requirements and user stories in Spanish and English
 - [x] Tech stack selection
 - [ ] Architecture and database design (entity-relationship diagram and API contract)
-- [ ] Project setup: backend, frontend, Docker and CI
+- [x] Backend setup: Spring Boot, PostgreSQL with Flyway, JWT security, Docker and CI
+- [x] First stories: login and lockout (HU-001, RN-07), vehicle registration and search (HU-008, HU-009)
+- [ ] Frontend setup: React, TypeScript and Vite
 - [ ] **MVP:** access and roles, workshops, customers and vehicles, scheduling, work orders, inventory, invoicing and in-person payments
 - [ ] **Release 2:** online payments, electronic invoicing, warranties and microinsurance, claims, customer portal and notifications
-- [ ] **Release 3:** reports and AI agents
+- [ ] **Release 3:** statistics and analytics dashboards, AI chatbots (portal, WhatsApp and staff) and AI agents
 
 ---
 
